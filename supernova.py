@@ -1,23 +1,21 @@
 #!/usr/bin/python3
 
-import sys
-import numpy as np
-import re
-import os.path
-import subprocess
 import argparse
+import os.path
+import re
+import subprocess
+import sys
 
-def usage():
-    print('\nsupernova.py by J. Scott (2018)')
-    print('\nUsage:')
-    print('\npython supernova.py <fluxname> <channelname> <experimentname> <weighting> (0 = apply weighting factor)')
-    print('\ne.g. python supernova.py livermore argon ar17kt 0 \n')
+import numpy as np
 
 parser = argparse.ArgumentParser(description = 'SNOwGLoBES: public software for computing interaction rates and distributions of observed quantities for supernova burst neutrinos in common detector materials.')
 parser.add_argument('fluxname', type=str, help='Name of flux. \n (eg. livermore)')
 parser.add_argument('channelname', type=str, help='Name of channel. \n (eg. argon)')
 parser.add_argument('experimentname', type=str, help='Name of experiment. \n (eg. ar17kt)')
-parser.add_argument('--weight',action='store_true', help='Apply weighting factor. \n (eg. 0 = Applied, 1 = Not Applied')
+parser.add_argument('--weight',action='store_true', help='Apply weighting factor. \n')
+
+# e.g. python supernova.py livermore argon ar17kt
+
 args = parser.parse_args()
 
 fluxname = args.fluxname
@@ -27,7 +25,7 @@ noweight = args.weight
 
 exename = "bin/supernova"
 
-chanfilename = "channels/channels_" +channame+ ".dat"
+chanfilename = "channels/channels_" + channame + ".dat"
 
 #Create the GLOBES file
 globesfilename = "supernova.glb"
@@ -41,11 +39,9 @@ with open("glb/preamble.glb") as PREAMBLE:
 
 
 #Create the corresponding flux file name
-fluxfilename = "fluxes/" +fluxname+ ".dat"
+fluxfilename = "fluxes/" + fluxname + ".dat"
 if not os.path.exists(fluxfilename):
     print("Flux file name " + fluxfilename + " not found")
-
-#add the error message for if the user inputs an invalid Flux fluxfilename
 
 #Open the flux globes file, read contents and replace supernova_flux.dat with the fluxfilename
 with open("glb/flux.glb") as FLUX:
@@ -64,7 +60,7 @@ with open(chanfilename) as CHANFILE:
     chan_names = [item[0] for item in stuff]
 #Print the smearing data file name for each channel in the channel file to the GLOBES file
     for chan_name in chan_names:
-        output_line = "include \"smear/smear_" + chan_name + "_" +expt_config+ ".dat\""
+        output_line = "include \"smear/smear_" + chan_name + "_" + expt_config + ".dat\""
         print(output_line, file = GLOBESFILE)
 
 
@@ -98,12 +94,12 @@ with open(detfilename) as DETFILENAME:
             pass
 
 #Calculate the target mass in ktons of free particles
-target_mass_raw = masses_array[index]*normfactor_array[index]
+target_mass_raw = masses_array[index] * normfactor_array[index]
 #Format the target mass for output. (13 total spaces, with 6 trailing decimals?)
 target_mass = '{:13.6f}'.format(target_mass_raw)
 
 #Print the experiment configuration and corresponding mass to the terminal
-print("Experiment config: " + expt_config + " Mass: " +masses[index]+ " kton ")
+print("Experiment config: " + expt_config + " Mass: " + masses[index] + " kton ")
 
 #ADD the background smearing here, for the given detector configuration
 #There are not yet background channels for all detectors.
@@ -113,6 +109,7 @@ bg_chan_name = "bg_chan"
 
 #Determine the background file name
 bg_filename = "backgrounds/" + bg_chan_name + "_" + expt_config + ".dat"
+
 #Check whether the file exists
 if os.path.exists(bg_filename):
     do_bg = 1
@@ -131,7 +128,7 @@ with open("glb/detector.glb", 'w') as DETECTOR:
     #detector_contents1 = re.sub('\d[.]\d\d\d\d\d\d', target_mass, detector_contents)
     #print(detector_contents1, file = GLOBESFILE)
 #Print the detector settings to the GLOBES file, with the calculated target mass
-    output_line = ("\n" + "/* ####### Detector settings ####### */" + "\n" + "\n" + "$target_mass= " +target_mass+ "\n")
+    output_line = ("\n" + "/* ####### Detector settings ####### */" + "\n" + "\n" + "$target_mass= " + target_mass + "\n")
     print(output_line, file = GLOBESFILE)
 
 
@@ -143,8 +140,8 @@ with open(chanfilename) as CHANFILE:
     chan_names = [item[0] for item in stuff]
     #For each of the channels, print the cross-sections file name to GLOBES file
     for chan in chan_names:
-        print("cross(#" +chan+ ")<", file = GLOBESFILE)
-        print("      @cross_file= \"xscns/xs_" +chan+ ".dat\"", file = GLOBESFILE)
+        print("cross(#" + chan + ")<", file = GLOBESFILE)
+        print("      @cross_file= \"xscns/xs_" + chan + ".dat\"", file = GLOBESFILE)
         print(">", file = GLOBESFILE)
 
 #Add the fake bg channel cross section, if it exists for this configuration
@@ -175,13 +172,13 @@ with open(chanfilename) as CHANFILE:
     #Iterating over each channel by using the index, we print the channel name, cpstate, and inflav to GLOBES file
     for i in index:
 
-        print("channel(#" +chan_name[i]+"_signal)<", file = GLOBESFILE)
+        print("channel(#" + chan_name[i] + "_signal)<", file = GLOBESFILE)
 
-        print("      @channel= #supernova_flux:  "+cpstate[i]+ ":    "+inflav[i]+":     "+inflav[i]+ ":    #" +chan_name[i]+":    #" +chan_name[i]+ "_smear", file = GLOBESFILE)
+        print("      @channel= #supernova_flux:  " + cpstate[i] + ":    " + inflav[i] + ":     " + inflav[i] + ":    #" + chan_name[i] + ":    #" + chan_name[i] + "_smear", file = GLOBESFILE)
 
 
         #Get the post-smearing efficiency file names for each channel
-        eff_file = "effic/effic_" + chan_name[i] + "_"+ expt_config + ".dat"
+        eff_file = "effic/effic_" + chan_name[i] + "_" + expt_config + ".dat"
         #Now open the efficiency files, read the contents, the print the efficiency matrices to the GLOBES file
         with open(eff_file) as EFF_FILE:
             eff_file_contents = EFF_FILE.read()
@@ -195,14 +192,14 @@ if do_bg == 1:
     #this is dummy info... NOT SURE WHAT TO DO WITH THIS
     cpstate = "-"
     inflav = "e"
-    output_line = "channel(#" +bg_chan_name+"_signal)<"
+    output_line = "channel(#" + bg_chan_name + "_signal)<"
     print(output_line, file = GLOBESFILE)
 
-    output_line = "      @channel= #supernova_flux:  "+cpstate+":    "+inflav+":     "+inflav+":    #" + bg_chan_name +":    #"+bg_chan_name+ "_smear"
+    output_line = "      @channel= #supernova_flux:  " + cpstate + ":    " + inflav + ":     " + inflav + ":    #" + bg_chan_name + ":    #" + bg_chan_name + "_smear"
     print(output_line, file = GLOBESFILE)
 
     #get the pre smearing backgrounds by channels
-    bg_file = "backgrounds/" +bg_chan_name+ "_" +expt_config+ ".dat"
+    bg_file = "backgrounds/" + bg_chan_name + "_" + expt_config + ".dat"
     print(bg_file, "\n")
 
     #Open the background file and output the file name to the GLOBES file
@@ -247,7 +244,7 @@ def apply_weights (filename):
 
         #Iterating over the channels by using the index, we create the unweighted and weighted file names for each channel
         for i in index:
-            unweightedfilename = "out/" + fluxname + "_" + chan_names[i] + "_" + expt_config + "_events" + filename +"_unweighted.dat"
+            unweightedfilename = "out/" + fluxname + "_" + chan_names[i] + "_" + expt_config + "_events" + filename + "_unweighted.dat"
 
             weightedfilename = "out/" + fluxname + "_" + chan_names[i] + "_" + expt_config + "_events" + filename + ".dat"
 
@@ -258,7 +255,7 @@ def apply_weights (filename):
             with open(unweightedfilename, 'r') as UNWEIGHTED:
                 with open(weightedfilename, 'w') as WEIGHTED:
                     for line in UNWEIGHTED:
-                        
+
 			#print(line)
 			#Strip any leading whitespace... I THINK??
                         line = line.strip()
@@ -289,7 +286,7 @@ def apply_weights (filename):
                                 evrate_array = np.array(evrate, dtype = float)
                                 #Calculate the new evrate, by multiplying the evrate with the num_target_factor for the specific channel as given by num
                                 new_evrate = np.dot(evrate_array, num)
-                                
+
 
                                 #Print the weighted data to the weighted file
                                 output = "{0} {1}".format(enbin, new_evrate)
