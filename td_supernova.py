@@ -1,13 +1,13 @@
 #/usr/bin/python3
 
+import argparse
+import linecache as lc
+import os
 import subprocess
 import sys
-import os
-import linecache as lc
-import pandas as pd
-import argparse
-import numpy as np
 
+import numpy as np
+import pandas as pd
 
 parser = argparse.ArgumentParser(description = 'Loops time-dependent fluence files through SNOwGLoBES')
 parser.add_argument('channelname', type=str, help='Name of channel. \n (eg. argon)')
@@ -15,20 +15,27 @@ parser.add_argument('experimentname', type=str, help='Name of experiment. \n (eg
 parser.add_argument('fluxname', type=str, help='Name of flux. \n (eg. chimera)')
 parser.add_argument('fluxpath', type=str, help='Directory containing flux files. \n (eg. /lustre/atlas1/stf006/proj-shared/bronson/2D_lumspec/)')
 parser.add_argument('--interpolate', action='store_true', help='option to interpolate raw data')
+parser.add_argument('--alphafit', action='store_true', help='option to use alphafit rather than linear interpolation')
 
 args = parser.parse_args()
 
-	
+
 channame = args.channelname
 expt_config = args.experimentname
 fluxname = args.fluxname
 fluxpath = args.fluxpath
 interpolate = args.interpolate
+alphafit = args.alphafit
 
 
 if interpolate:
-    interpcmd = "python interpolate.py " + fluxname + " " + fluxpath + " /fluxes/td_fluxes/" + fluxname 
+    interpcmd = "python interpolate.py " + fluxname + " " + fluxpath + " /fluxes/td_fluxes/" + fluxname
     subprocess.run(interpcmd, shell=True)
+
+if alphafit:
+
+	#INSERT function for alpha fit
+	print("alphafit not loaded")
 
 path1 = "./fluxes/td_fluxes/" + fluxname
 path2 = sys.argv[4]
@@ -42,7 +49,7 @@ pb_time = []
 
 for fluxes in files:
 	if "00" in fluxes:
-		fluxfile = "td_fluxes/" + fluxname + "/"+ fluxes
+		fluxfile = "td_fluxes/" + fluxname + "/" + fluxes
 		cmd = "python supernova.py " + fluxfile + " " + channame + " " + expt_config + " " + "--weight"
 		subprocess.run(cmd, shell=True)
 
@@ -54,7 +61,7 @@ for fluxes in files:
 
 time_outputfile = "./fluxes/td_fluxes/timesteps/"+ fluxname + "_timesteps.dat"
 
-d = {"Overall Time (s)": overall_time, "Post Bounce Time (s)": pb_time}	
+d = {"Overall Time (s)": overall_time, "Post Bounce Time (s)": pb_time}
 df = pd.DataFrame(data=d, columns = ["Overall Time (s)", "Post Bounce Time (s)"])
 txt = df.to_string(index=False)
 with open(time_outputfile, 'w') as fo:
