@@ -19,7 +19,6 @@ parser.add_argument('--alphafit', action='store_true', help='option to use alpha
 
 args = parser.parse_args()
 
-
 channame = args.channelname
 expt_config = args.experimentname
 fluxname = args.fluxname
@@ -27,13 +26,11 @@ fluxpath = args.fluxpath
 interpolate = args.interpolate
 alphafit = args.alphafit
 
-
 if interpolate:
     interpcmd = "python interpolate.py " + fluxname + " " + fluxpath + " /fluxes/td_fluxes/" + fluxname
     subprocess.run(interpcmd, shell=True)
 
 if alphafit:
-
 	#INSERT function for alpha fit
 	print("alphafit not loaded")
 

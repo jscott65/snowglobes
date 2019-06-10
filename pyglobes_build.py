@@ -2,35 +2,72 @@ import os
 import re
 import subprocess
 import six
+import os.path
 
 from cffi import FFI
 
-SRC_ROOT = '/usr/local/include' #i.e. globes-config --include (includes globes.c/h)
+SRC_ROOT = subprocess.check_output(['globes-config --include'], shell=True)
+SRC_ROOT = str(SRC_ROOT[2:], 'utf-8').rstrip()
 
 FFI_BUILDER = FFI()
 
-MACROS = {
-'GLB_NU_FLAVOURS' : '3',
-'GLB_MIN_DEFAULT' : 'GLB_MIN_POWELL',
-'GLB_EFF' : '1',
-'GLB_BG' : '2',
-'GLB_SIG' : '3',
-'GLB_ALL' : '-1',
-'GLB_EARTH_RADIUS' : '6371.0',
-'GLB_EV_TO_KM_FACTOR' : '1.97327e-10',
-'GLB_KM_TO_EV(x)' : '((x) / GLB_EV_TO_KM_FACTOR)',
-'GLB_EV_TO_KM(x)' : '((x) * GLB_EV_TO_KM_FACTOR)',
-'GLB_MAX_EXP' : '300',
-'GLB_MAX_CHANNELS' : '64',
-'GLB_MAX_RULES' : '64',
-'GLB_MAX_NUISANCE' : '128',
-'GLB_MAX_SMEAR' : '64',
-'GLB_MAX_FLUXES' : '64',
-'GLB_MAX_XSECS' : '64',
+INCLUDES = """
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+#include <string.h>
+#include <argp.h>
+#include <ctype.h>
+"""
+
+globes = '#include "{GLB_INCLUDE}/globes/globes.h"'.format(GLB_INCLUDE=SRC_ROOT)
+
+DEFINES= """
+    /* Constants */
+
+/* Number of neutrino flavours */
+#define GLB_NU_FLAVOURS  3
+
+#define GLB_MIN_DEFAULT  GLB_MIN_POWELL
+
+#define GLB_EFF    1
+#define GLB_BG     2
+#define GLB_SIG    3
+
+#define GLB_ALL   -1
+
+#define GLB_EARTH_RADIUS 6371.0 /* km */
+
+/* Unit conversion */
+
+#define GLB_EV_TO_KM_FACTOR 1.97327e-10
+
+#define GLB_KM_TO_EV(x)      ((x) / GLB_EV_TO_KM_FACTOR)
+#define GLB_EV_TO_KM(x)      ((x) * GLB_EV_TO_KM_FACTOR)
+
+/* maximum number of experiments */
+#define GLB_MAX_EXP      300
+
+/* maximum numbers of channels, rules, ... per experiment */
+#define GLB_MAX_CHANNELS  64
+#define GLB_MAX_RULES     64
+#define GLB_MAX_NUISANCE 128
+#define GLB_MAX_SMEAR     64
+#define GLB_MAX_FLUXES    64
+#define GLB_MAX_XSECS     64
+
+static int PInit(char *file){
+    int s;
+    s=glbInitExperiment(file,&glb_experiment_list[0],&glb_num_of_exps);
+    return s;
 }
+"""
+
+MACROS = INCLUDES + globes + DEFINES
 
 HEADER = """
-    /* Constants */
     /* Constants */
 
 /* Number of neutrino flavours */
@@ -50,7 +87,7 @@ HEADER = """
 /* maximum numbers of channels, rules, ... per experiment */
 #define GLB_MAX_CHANNELS  ...
 #define GLB_MAX_RULES     ...
-#define GLB_MAX_NUISANCE ...
+#define GLB_MAX_NUISANCE  ...
 #define GLB_MAX_SMEAR     ...
 #define GLB_MAX_FLUXES    ...
 #define GLB_MAX_XSECS     ...
@@ -337,62 +374,11 @@ static int PInit(char *file);
 """
 
 FFI_BUILDER.cdef(HEADER)
-FFI_BUILDER.set_source('pyglobes._pyglobes', """
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <string.h>
-#include <argp.h>
-#include <ctype.h>
-#include "/Users/justinscott/globes-3.2.17/source/glb_error.h"
-#include "/Users/justinscott/globes-3.2.17/source/glb_multiex.h"
-#include "/Users/justinscott/globes-3.2.17/globes/globes.h"
+FFI_BUILDER.set_source('pyglobes._pyglobes', MACROS,
 
-    /* Constants */
-
-/* Number of neutrino flavours */
-#define GLB_NU_FLAVOURS  3
-
-#define GLB_MIN_DEFAULT  GLB_MIN_POWELL
-
-#define GLB_EFF    1
-#define GLB_BG     2
-#define GLB_SIG    3
-
-#define GLB_ALL   -1
-
-#define GLB_EARTH_RADIUS 6371.0 /* km */
-
-/* Unit conversion */
-
-#define GLB_EV_TO_KM_FACTOR 1.97327e-10
-
-#define GLB_KM_TO_EV(x)      ((x) / GLB_EV_TO_KM_FACTOR)
-#define GLB_EV_TO_KM(x)      ((x) * GLB_EV_TO_KM_FACTOR)
-
-/* maximum number of experiments */
-#define GLB_MAX_EXP      300
-
-/* maximum numbers of channels, rules, ... per experiment */
-#define GLB_MAX_CHANNELS  64
-#define GLB_MAX_RULES     64
-#define GLB_MAX_NUISANCE 128
-#define GLB_MAX_SMEAR     64
-#define GLB_MAX_FLUXES    64
-#define GLB_MAX_XSECS     64
-
-static int PInit(char *file){
-    int s;
-    s=glbInitExperiment(file,&glb_experiment_list[0],&glb_num_of_exps);
-    return s;
-}
-""",
-
-include_dirs=[SRC_ROOT],
-libraries=['globes', 'gsl', 'gslcblas', 'm'], #i.e. globes-config --libs
-library_dirs=[SRC_ROOT, '/Users/justinscott/anaconda3/lib'])
+libraries=['globes'] #i.e. globes-config --libs
+)
 
 if __name__ == '__main__':
     FFI_BUILDER.compile()

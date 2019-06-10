@@ -29,7 +29,7 @@ os.environ["SNOWGLOBES"] = SNOWGLOBES
 #
 setup(
     name = 'SNOwGLoBES',
-    version = '0.0.1',
+    version = '2.0.0',
 
     description = ' ',
     long_description = """ """,
@@ -37,12 +37,12 @@ setup(
 
     author = 'Justin Scott',
     license = 'GNU',
-    packages = find_packages(),
+    packages = find_packages('snowglobes'),
 
     setup_requires = [
         "cffi>=1.0.0"
     ],
-    
+
     install_requires = [
         "cffi>=1.0.0"
     ],
