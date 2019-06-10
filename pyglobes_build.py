@@ -9,6 +9,9 @@ from cffi import FFI
 SRC_ROOT = subprocess.check_output(['globes-config --include'], shell=True)
 SRC_ROOT = str(SRC_ROOT[2:], 'utf-8').rstrip()
 
+lib_dirs = subprocess.check_output(['globes-config --ltlibs'], shell=True)
+lib_dirs = str(lib_dirs[:-14], 'utf-8').rstrip()
+
 FFI_BUILDER = FFI()
 
 INCLUDES = """
@@ -377,7 +380,8 @@ FFI_BUILDER.cdef(HEADER)
 
 FFI_BUILDER.set_source('pyglobes._pyglobes', MACROS,
 
-libraries=['globes'] #i.e. globes-config --libs
+libraries=['globes'],
+library_dirs=[lib_dirs] #i.e. globes-config --libs
 )
 
 if __name__ == '__main__':
