@@ -37,15 +37,11 @@ setup(
 
     author = 'Justin Scott',
     license = 'GNU',
-    packages = find_packages('snowglobes'),
+    py_modules = ['src.snowglobes'],
+    #packages = find_packages('snowglobes'),
 
-    setup_requires = [
-        "cffi>=1.0.0"
-    ],
-
-    install_requires = [
-        "cffi>=1.0.0"
-    ],
+    setup_requires = ["cffi>=1.0.0"],
+    install_requires = ["cffi>=1.0.0"],
 
     cffi_modules = ["pyglobes_build.py:FFI_BUILDER"]
 )

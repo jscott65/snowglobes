@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 import numpy as np
-from snowglobes import supernova, create_AEDL_file, apply_weights
+from src.snowglobes import supernova, create_AEDL_file, apply_weights
 
 parser = argparse.ArgumentParser(description = 'SNOwGLoBES: public software for computing interaction rates and distributions of observed quantities for supernova burst neutrinos in common detector materials.')
 parser.add_argument('fluxname', type=str, help='Name of flux. \n (eg. livermore)')
