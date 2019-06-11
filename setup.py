@@ -37,7 +37,7 @@ setup(
 
     author = 'Justin Scott',
     license = 'GNU',
-    py_modules = ['src.snowglobes'],
+    py_modules = ['supernova', 'src.snowglobes'],
     #packages = find_packages('snowglobes'),
 
     setup_requires = ["cffi>=1.0.0"],

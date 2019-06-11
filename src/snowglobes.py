@@ -273,8 +273,9 @@ def create_AEDL_file(fluxname, channame, expt_config):
     return(0)
 
 #Define the function that will apply the channel weighting factors
-def apply_weights(filename):
+def apply_weights(filename, fluxname, channame, expt_config):
     #Open the channel file and grab all the info
+    chanfilename = "channels/channels_{}.dat".format(channame)
     with open(chanfilename) as CHANFILE:
         stuff = [i.split() for i in CHANFILE]
         chan_names = [item[0] for item in stuff]
