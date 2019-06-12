@@ -6,24 +6,49 @@ import numpy as np
 import re
 import subprocess
 
+class Channel():
+    def __init__(self, channame):
+        self.channel = channame
+        data = np.genfromtxt(self.get_channel_file_name(), dtype=None, encoding=None)
+        self.name = [i[0] for i in data]
+        self.num = [i[1] for i in data]
+        self.cp = [i[2] for i in data]
+        self.flav = [i[3] for i in data]
+        self.factor = [i[4] for i in data]
+
+    def get_channel_file_name(self):
+        channel_file_name = "channels/channels_{}.dat".format(self.channel)
+        return(channel_file_name)
+
+class Detector():
+    def __init__(self):
+        detfilename = "detector_configurations.dat"
+        data = np.genfromtxt(detfilename, dtype=None, encoding=None)
+        self.config = [i[0] for i in data]
+        self.mass = [i[1] for i in data]
+        self.norm = [i[2] for i in data]
+
+    def get_index(self, expt_config):
+        index = self.config.index(expt_config)
+        return(index)
+
+    def get_target_mass(self, expt_config):
+        return(self.mass[self.get_index(expt_config)])
+
+
 from pyglobes._pyglobes import ffi, lib
 
-def supernova(flux_file_name, channame, expt_config_name):
+def supernova(fluxname, chan, expt_config):
 
-    channel_file_name = "channels/channels_{}.dat".format(channame)
+    channel_file_name = chan.get_channel_file_name()
+
     print("Channels from {}".format(channel_file_name))
 
     if not os.path.exists(channel_file_name):
         print("Cannot open file")
 
-    chans = np.genfromtxt(channel_file_name, dtype=None, encoding=None)
-    chan_name = [i[0] for i in chans]
-    chan_num = [i[1] for i in chans]
-    cp = [i[2] for i in chans]
-    flav = [i[3] for i in chans]
-    num_target_factor = [i[4] for i in chans]
 
-    print("Number of channels found: {}".format(len(chan_num)))
+    print("Number of channels found: {}".format(len(chan.name)))
 
     arg = ffi.new("char[]", b"snowglobes.py")
 
@@ -48,28 +73,27 @@ def supernova(flux_file_name, channame, expt_config_name):
     lib.glbSetOscillationParameters(true_values)
     lib.glbSetRates()
 
+    for i, chan_name in enumerate(chan.name):
 
-    for i, chan in enumerate(chan_name):
-
-        outfile = "out/{}_{}_{}_events_unweighted.dat".format(flux_file_name, chan, expt_config_name)
+        outfile = "out/{}_{}_{}_events_unweighted.dat".format(fluxname, chan_name, expt_config)
         print(i, outfile)
         with open(outfile, 'w+') as f_out:
-            ret = lib.glbShowChannelRates(f_out, 0, chan_num[i], lib.GLB_PRE, lib.GLB_WO_EFF, lib.GLB_WO_BG)
+            ret = lib.glbShowChannelRates(f_out, 0, chan.num[i], lib.GLB_PRE, lib.GLB_WO_EFF, lib.GLB_WO_BG)
 
-        outfile_smeared = "out/{}_{}_{}_events_smeared_unweighted.dat".format(flux_file_name, chan, expt_config_name)
+        outfile_smeared = "out/{}_{}_{}_events_smeared_unweighted.dat".format(fluxname, chan_name, expt_config)
         print(i, outfile_smeared)
         with open(outfile_smeared, 'w+') as f_out_smeared:
-            ret = lib.glbShowChannelRates(f_out_smeared, 0, chan_num[i], lib.GLB_POST, lib.GLB_W_EFF, lib.GLB_W_BG)
+            ret = lib.glbShowChannelRates(f_out_smeared, 0, chan.num[i], lib.GLB_POST, lib.GLB_W_EFF, lib.GLB_W_BG)
 
-    bgfile = 'backgrounds/bg_chan_{}.dat'.format(expt_config_name)
+    bgfile = 'backgrounds/bg_chan_{}.dat'.format(expt_config)
 
     if os.path.exists(bgfile):
 
-        outfile = "out/{}_bg_chan_{}_events_unweighted.dat".format(flux_file_name, expt_config_name)
+        outfile = "out/{}_bg_chan_{}_events_unweighted.dat".format(fluxname, expt_config)
         with open(outfile, 'w+') as f_out:
             ret = lib.glbShowChannelRates(f_out, 0, chan_num[i], lib.GLB_PRE, lib.GLB_WO_EFF, lib.GLB_W_BG)
 
-        outfile_smeared = "out/{}_bg_chan_{}_events_smeared_unweighted.dat".format(flux_file_name, expt_config_name)
+        outfile_smeared = "out/{}_bg_chan_{}_events_smeared_unweighted.dat".format(fluxname, expt_config)
         with open(outfile_smeared, 'w+') as f_out_smeared:
             ret = lib.glbShowChannelRates(f_out_smeared, 0, chan_num[i], lib.GLB_POST, lib.GLB_W_EFF, lib.GLB_W_BG)
     else:
@@ -81,11 +105,11 @@ def supernova(flux_file_name, channame, expt_config_name):
     return(0)
 
 
-def create_AEDL_file(fluxname, channame, expt_config):
+def create_AEDL_file(fluxname, chan, expt_config):
 
     exename = "bin/supernova"
 
-    chanfilename = "channels/channels_{}.dat".format(channame)
+    chan_file_name = chan.get_channel_file_name()
 
     #Create the GLOBES file
     globesfilename = "supernova.glb"
@@ -108,56 +132,32 @@ def create_AEDL_file(fluxname, channame, expt_config):
         flux_contents1 = re.sub('supernova_flux.dat', fluxfilename, flux_contents)
         print(flux_contents1, end = '', file = GLOBESFILE)
 
-    if not os.path.exists(chanfilename):
-        print("Flux file name {} not found".format(chanfilename))
+    if not os.path.exists(chan_file_name):
+        print("Flux file name {} not found".format(chan_file_name))
 
     #Channel data
     #start with smearing
     #Open the channel file and grab the channel name.
-    with open(chanfilename) as CHANFILE:
-        stuff = [i.split() for i in CHANFILE]
-        chan_names = [item[0] for item in stuff]
     #Print the smearing data file name for each channel in the channel file to the GLOBES file
-        for chan_name in chan_names:
-            output_line = "include \"smear/smear_{}_{}.dat\"".format(chan_name, expt_config)
-            print(output_line, file = GLOBESFILE)
+    for chan_name in chan.name:
+        output_line = "include \"smear/smear_{}_{}.dat\"".format(chan_name, expt_config)
+        print(output_line, file = GLOBESFILE)
 
     #Define the detector configurations file name
     detfilename = "detector_configurations.dat"
-
+    det = Detector()
     #include error essage if wrong input
     if not os.path.exists(detfilename):
         print("Detector file name {} not found".format(detfilename))
 
-    #Open the detector configurations file
-    with open(detfilename) as DETFILENAME:
-        for line in DETFILENAME:
-            #skip any leading comments
-            if line.startswith('#'):
-                pass
-            p = re.compile("\s+")
-            formatted_line=p.sub(" ", line)
-            #Grab the detector names, masses, and normalization factors
-            stuff = [i.split() for i in DETFILENAME]
-            detname = [item[0] for item in stuff]
-            masses =  [item[1] for item in stuff]
-            normfactor = [item[2] for item in stuff]
-            index = detname.index(expt_config)
-            #Convert the lists into arrays, in order to do math
-            masses_array = np.array(masses, dtype = float)
-            normfactor_array = np.array(normfactor, dtype = float)
-
-            #Skip any blank lines
-            if ((detname == "") or (masses == "") or (normfactor == "")):
-                pass
-
     #Calculate the target mass in ktons of free particles
-    target_mass_raw = masses_array[index] * normfactor_array[index]
+    target_mass_raw = det.get_target_mass(expt_config)
     #Format the target mass for output. (13 total spaces, with 6 trailing decimals?)
     target_mass = '{:13.6f}'.format(target_mass_raw)
 
     #Print the experiment configuration and corresponding mass to the terminal
-    print("Experiment config: {} Mass: {} kton ".format(expt_config, masses[index]))
+    print("Experiment config: {} Mass: {} kton ".format(expt_config, det.mass[det.get_index(expt_config)]))
+
 
     #ADD the background smearing here, for the given detector configuration
     #There are not yet background channels for all detectors.
@@ -186,14 +186,11 @@ def create_AEDL_file(fluxname, channame, expt_config):
     print("\n /******** Cross-sections ********/\n", file = GLOBESFILE)
 
     #Open the channel file and grab the channel names
-    with open(chanfilename) as CHANFILE:
-        stuff = [i.split() for i in CHANFILE]
-        chan_names = [item[0] for item in stuff]
-        #For each of the channels, print the cross-sections file name to GLOBES file
-        for chan in chan_names:
-            print("cross(#{})<".format(chan), file = GLOBESFILE)
-            print("      @cross_file= \"xscns/xs_{}.dat\"".format(chan), file = GLOBESFILE)
-            print(">", file = GLOBESFILE)
+    #For each of the channels, print the cross-sections file name to GLOBES file
+    for i, chan_name in enumerate(chan.name):
+        print("cross(#{})<".format(chan_name), file = GLOBESFILE)
+        print("      @cross_file= \"xscns/xs_{}.dat\"".format(chan_name), file = GLOBESFILE)
+        print(">", file = GLOBESFILE)
 
     #Add the fake bg channel cross section, if it exists for this configuration
     if do_bg == 1 :
@@ -208,34 +205,25 @@ def create_AEDL_file(fluxname, channame, expt_config):
 
     #NOW the channel definitions...
     #INCLUDE ERROR message
-    if not os.path.exists(chanfilename):
-        print("Channel file name {} not found".format(chanfilename))
+    if not os.path.exists(chan_file_name):
+        print("Channel file name {} not found".format(chan_file_name))
 
-    #Open the channel file and grab the channel names, index, cpstate, and inflav
-    with open(chanfilename) as CHANFILE:
-        stuff = [i.split() for i in CHANFILE]
-        chan_name = [item[0] for item in stuff]
-        index = [item[1] for item in stuff]
-        index = np.array(index, dtype = int)
-        cpstate =  [item[2] for item in stuff]
-        inflav = [item[3] for item in stuff]
+    #Iterating over each channel by using the index, we print the channel name, cpstate, and inflav to GLOBES file
+    for i, chan_name in enumerate(chan.name):
 
-        #Iterating over each channel by using the index, we print the channel name, cpstate, and inflav to GLOBES file
-        for i in index:
+        print("channel(#{}_signal)<".format(chan_name), file = GLOBESFILE)
 
-            print("channel(#{}_signal)<".format(chan_name[i]), file = GLOBESFILE)
-
-            print("      @channel= #supernova_flux:  {}:    {}:     {}:    #{}:    #{}_smear".format(cpstate[i], inflav[i], inflav[i], chan_name[i], chan_name[i]), file = GLOBESFILE)
+        print("      @channel= #supernova_flux:  {}:    {}:     {}:    #{}:    #{}_smear".format(chan.cp[i], chan.flav[i], chan.flav[i], chan_name, chan_name), file = GLOBESFILE)
 
 
-            #Get the post-smearing efficiency file names for each channel
-            eff_file = "effic/effic_{}_{}.dat".format(chan_name[i], expt_config)
-            #Now open the efficiency files, read the contents, the print the efficiency matrices to the GLOBES file
-            with open(eff_file) as EFF_FILE:
-                eff_file_contents = EFF_FILE.read()
-                print("       @post_smearing_efficiencies = {}".format(eff_file_contents) , file = GLOBESFILE)
+        #Get the post-smearing efficiency file names for each channel
+        eff_file = "effic/effic_{}_{}.dat".format(chan_name, expt_config)
+        #Now open the efficiency files, read the contents, the print the efficiency matrices to the GLOBES file
+        with open(eff_file) as EFF_FILE:
+            eff_file_contents = EFF_FILE.read()
+            print("       @post_smearing_efficiencies = {}".format(eff_file_contents) , file = GLOBESFILE)
 
-            print(">\n", file = GLOBESFILE)
+        print(">\n", file = GLOBESFILE)
 
     #NOW make a fake channel background... There is only one bgfile for now
     if do_bg == 1:
@@ -273,65 +261,52 @@ def create_AEDL_file(fluxname, channame, expt_config):
     return(0)
 
 #Define the function that will apply the channel weighting factors
-def apply_weights(filename, fluxname, channame, expt_config):
+def apply_weights(filename, fluxname, chan, expt_config):
     #Open the channel file and grab all the info
-    chanfilename = "channels/channels_{}.dat".format(channame)
-    with open(chanfilename) as CHANFILE:
-        stuff = [i.split() for i in CHANFILE]
-        chan_names = [item[0] for item in stuff]
-        index = [item[1] for item in stuff]
-        index = np.array(index, dtype = int)
-        cpstate =  [item[2] for item in stuff]
-        inflav = [item[3] for item in stuff]
-        num_target_factor = [item[4] for item in stuff]
-        num_target_factor_array = np.array(num_target_factor, dtype = float)
+    channel_file_name = chan.get_channel_file_name()
+    #OPEN the unweighted output file as input and the weighted file as output
+    #essentially we begin with the unweighted file that is made by globes then we weight it
+    #and then we weight the smeared one resulting in a total of 3 files per config setup
 
-        #OPEN the unweighted output file as input and the weighted file as output
-        #essentially we begin with the unweighted file that is made by globes then we weight it
-        #and then we weight the smeared one resulting in a total of 3 files per config setup
+    #Iterating over the channels by using the index, we create the unweighted and weighted file names for each channel
+    for i, chan_name in enumerate(chan.name):
+        unweightedfilename = "out/{}_{}_{}_events{}_unweighted.dat".format(fluxname, chan_name, expt_config, filename)
+        weightedfilename = "out/{}_{}_{}_events{}.dat".format(fluxname, chan_name, expt_config, filename)
 
-        #Iterating over the channels by using the index, we create the unweighted and weighted file names for each channel
-        for i in index:
-            unweightedfilename = "out/{}_{}_{}_events{}_unweighted.dat".format(fluxname, chan_names[i], expt_config, filename)
 
-            weightedfilename = "out/{}_{}_{}_events{}.dat".format(fluxname, chan_names[i], expt_config, filename)
+        #Open both files
+        with open(unweightedfilename, 'r') as UNWEIGHTED:
+            with open(weightedfilename, 'w') as WEIGHTED:
+                for line in UNWEIGHTED:
 
-            #Using the index, we select the num_target_factor for the corresponding channel
-            num = num_target_factor_array[i]
+                    line = line.strip()
+                    #Replace any contiguous whitespace with a single space
+                    p = re.compile("\s+")
+                    formatted_line=p.sub(" ", line)
+                    #Skip any blank lines
+                    if not line:
+                        continue
+                    #Skip any lines that begin with comments
+                    if line.startswith("#"):
+                        continue
 
-            #Open both files
-            with open(unweightedfilename, 'r') as UNWEIGHTED:
-                with open(weightedfilename, 'w') as WEIGHTED:
-                    for line in UNWEIGHTED:
+                    #Match the end of the data, and print the bar
+                    if line == "----------------------":
+                        print("----------------------", file = WEIGHTED)
+                    else:
+                        np.set_printoptions(precision=6)
+                        #If we're not at the end of the file, save each line into stuff2
+                        #Split stuff2 into enbin and evrate
+                        stuff2 = formatted_line.split()
+                        enbin = stuff2[0]
+                        evrate = stuff2[1]
+                        #If there is a value for enbin, then we print the weighted info into the weighted file
+                        if enbin != "" :
+                            #Convert the evrate into an array
+                            evrate_array = np.array(evrate, dtype = float)
+                            #Calculate the new evrate, by multiplying the evrate with the num_target_factor for the specific channel as given by num
+                            new_evrate = np.dot(evrate_array, chan.num[i])
 
-                        line = line.strip()
-                        #Replace any contiguous whitespace with a single space
-                        p = re.compile("\s+")
-                        formatted_line=p.sub(" ", line)
-                        #Skip any blank lines
-                        if not line:
-                            continue
-                        #Skip any lines that begin with comments
-                        if line.startswith("#"):
-                            continue
-
-                        #Match the end of the data, and print the bar
-                        if line == "----------------------":
-                            print("----------------------", file = WEIGHTED)
-                        else:
-                            np.set_printoptions(precision=6)
-                            #If we're not at the end of the file, save each line into stuff2
-                            #Split stuff2 into enbin and evrate
-                            stuff2 = formatted_line.split()
-                            enbin = stuff2[0]
-                            evrate = stuff2[1]
-                            #If there is a value for enbin, then we print the weighted info into the weighted file
-                            if enbin != "" :
-                                #Convert the evrate into an array
-                                evrate_array = np.array(evrate, dtype = float)
-                                #Calculate the new evrate, by multiplying the evrate with the num_target_factor for the specific channel as given by num
-                                new_evrate = np.dot(evrate_array, num)
-
-                                #Print the weighted data to the weighted file
-                                output = "{} {}".format(enbin, new_evrate)
-                                print(output, file = WEIGHTED)
+                            #Print the weighted data to the weighted file
+                            output = "{} {}".format(enbin, new_evrate)
+                            print(output, file = WEIGHTED)

@@ -7,18 +7,20 @@ import subprocess
 import sys
 
 import numpy as np
-from src.snowglobes import supernova, create_AEDL_file, apply_weights
+from src.snowglobes import supernova, create_AEDL_file, apply_weights, Channel
 
 def main(fluxname, channame, expt_config, *weight):
 
-    t = create_AEDL_file(fluxname, channame, expt_config)
+    chan = Channel(channame)
 
-    s = supernova(fluxname, channame, expt_config)
+    t = create_AEDL_file(fluxname, chan, expt_config)
+
+    s = supernova(fluxname, chan, expt_config)
 
     if weight:
         print("Applying channel weighting factors to output")
-        apply_weights("", fluxname, channame, expt_config)
-        apply_weights("_smeared", fluxname, channame, expt_config)
+        apply_weights("", fluxname, chan, expt_config)
+        apply_weights("_smeared", fluxname, chan, expt_config)
     else:
         print("No weighting factors applied to output")
 
@@ -41,4 +43,4 @@ if __name__ == '__main__':
 
     main(fluxname, channame, expt_config, weight)
 else:
-    print("supernova.py is being imported into another module")
+    print("supernova.py is being imported into another module, must create the AEDL file before running supernova()")
