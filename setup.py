@@ -22,9 +22,7 @@ setup(
     name = 'SNOwGLoBES',
     version = '2.0.0',
 
-    description = ' ',
-    long_description = """ """,
-    url = ' github  ',
+    url = 'https://github.com/jscott65/snowglobes',
 
     author = 'Justin Scott',
     license = 'GNU',
