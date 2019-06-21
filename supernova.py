@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 import numpy as np
-from src.snowglobes import supernova, create_AEDL_file, apply_weights, Channel
+from snowglobes.snowglobes import supernova, create_AEDL_file, apply_weights, Channel
 
 def main(fluxname, channame, expt_config, *weight):
 
@@ -17,7 +17,7 @@ def main(fluxname, channame, expt_config, *weight):
 
     s = supernova(fluxname, chan, expt_config)
 
-    if weight:
+    if weight == True:
         print("Applying channel weighting factors to output")
         apply_weights("", fluxname, chan, expt_config)
         apply_weights("_smeared", fluxname, chan, expt_config)
@@ -40,6 +40,7 @@ if __name__ == '__main__':
     channame = args.channelname
     expt_config = args.experimentname
     weight = args.weight
+    print(weight)
 
     main(fluxname, channame, expt_config, weight)
 else:
