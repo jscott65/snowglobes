@@ -1,0 +1,10 @@
+# Include the README
+#include README.txt
+
+# Include the license file
+#include LICENSE.txt
+
+# Include the data files
+graft snowglobes
+
+include pyglobes_build

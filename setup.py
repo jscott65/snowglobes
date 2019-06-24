@@ -4,7 +4,7 @@ import os
 import subprocess
 from os import path
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 
@@ -20,7 +20,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name = 'SNOwGLoBES',
-    version = '2.0.13',
+    version = '2.0.15',
 
     author = 'Justin Scott',
     author_email = 'jscott65@vols.utk.edu',
@@ -32,11 +32,11 @@ setup(
     classifiers=["Programming Language :: Python :: 3"],
 
     #packages = ['supernova'],
-    py_modules = ['snowglobes.snowglobes', 'pyglobes', 'pyglobes_build'],
-    #packages = find_packages('snowglobes'),
+    #py_modules = ['aedl', 'globes', 'snowglobes', 'pyglobes_build'],
+    packages = find_packages(),
     #ext_package = 'pyglobes',
-
-    scripts = ['supernova.py'],
+    #ADD ENTRY POINT SUPERNOVA:MOAIN
+    scripts = ['snowglobes/supernova.py'],
 
     include_package_data = True,
 

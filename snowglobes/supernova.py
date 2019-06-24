@@ -1,19 +1,17 @@
-#/usr/bin/python3
+#!/usr/bin/env python
 
 import argparse
-import os
-import re
-import subprocess
-import sys
 
-import numpy as np
-from snowglobes.snowglobes import supernova, create_AEDL_file, apply_weights, Channel
+
+from snowglobes.snowglobes import Channel, Detector, apply_weights, supernova
+from snowglobes.aedl import create_AEDL_file
 
 def main(fluxname, channame, expt_config, *weight):
 
     chan = Channel(channame)
+    det = Detector()
 
-    t = create_AEDL_file(fluxname, chan, expt_config)
+    t = create_AEDL_file(fluxname, chan, det, expt_config)
 
     s = supernova(fluxname, chan, expt_config)
 
@@ -33,15 +31,15 @@ if __name__ == '__main__':
     parser.add_argument('--weight',action='store_true', help='Apply weighting factor. \n')
 
     # e.g. python supernova.py livermore argon ar17kt
-    #if statement for --td declaring class which is obvis diff
     args = parser.parse_args()
 
     fluxname = args.fluxname
     channame = args.channelname
     expt_config = args.experimentname
     weight = args.weight
-    print(weight)
+
 
     main(fluxname, channame, expt_config, weight)
+
 else:
     print("supernova.py is being imported into another module, must create the AEDL file before running supernova()")
