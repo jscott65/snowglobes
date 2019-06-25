@@ -6,9 +6,9 @@ Infrastructure for the Analysis of Neutrino Signatures in Core-Collapse Supernov
 
 The snowglobes package can be downloaded directly from pip. However, there are several prerequisites.
 
-### Prerequisites
+## Prerequisites
 
-## GLoBES
+### GLoBES
 Currently, the GLoBES library must be installed, made, and added to PATH prior to any attempt to install snowglobes.
 
 
@@ -45,12 +45,12 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:GLB_DIR
 
  REMEMBER to set LD_LIBRARY_PATH  to include GLB_DIR, otherwise the globes lib will not be found at runtime.
 
-## Other dependencies
+### Other dependencies
 * cffi
 
 Pip will take care of this when it installs the package.
 
-### Installing
+## Installing
 
 Now that we have the globes library installed. We can install the snowglobes package.
 
