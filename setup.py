@@ -28,7 +28,7 @@ setup(
     license='LICENSE.txt',
 
     description='SNOwGLoBES: Infrastructure for the Analysis of Neutrino Signatures in Core-Collapse Supernovae',
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     classifiers=["Programming Language :: Python :: 3"],
 
     #packages = ['supernova'],
