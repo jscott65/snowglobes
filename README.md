@@ -8,12 +8,14 @@ The snowglobes package can be downloaded directly from pip. However, there are s
 
 ### Prerequisites
 
+##GLoBES
 Currently, the GLoBES library must be installed, made, and added to PATH prior to any attempt to install snowglobes.
 
 
 [GLoBES: General Long Baseline Experiment Simulator](https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz) - Download the source files here
 
-To install the library, you must have gcc and gsl installed. Then follow the steps in the INSTALL file, or as follows:
+To install the library, you must have gcc and gsl installed.
+Then, follow the steps in the INSTALL file, or as follows:
 
 ```
 cd to GLOBES source directory
@@ -43,6 +45,10 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:GLB_DIR
 
  REMEMBER to set LD_LIBRARY_PATH  to include GLB_DIR, otherwise the globes lib will not be found at runtime.
 
+##Other dependencies
+* cffi
+
+Pip will take care of this when it installs the package.
 
 ### Installing
 
@@ -62,11 +68,6 @@ After installation, verify that the directory the package is saved in is on the 
 
 ```
 echo $PATH
-```
-
-or
-
-```
 echo $PYTHON_PATH
 ```
 
@@ -74,31 +75,24 @@ If it is not on your paths, add it as so
 
 ```
 export PYTHON_PATH=$PYTHON_PATH:/path/to/snowglobes/
-```
-
-and
-
-```
 export PATH=$PATH:/path/to/snowglobes/
 ```
 
 ## Running the experiment
 
-There are three different modes of using the snowglobes package.
+There are three different modes of using the snowglobes package. The first method is the simplest and the main mode of usage.
 
-The first method is the simplest and the main mode of usage.
+During installation, the script supernova.py is saved to the python scripts directory. It can be executed via the command line from any directory.
 
-During installation, the script supernova.py is saved to the python scripts directory.
-
-It can be executed via the command line from any directory.
-
-```
-supernova.py livermore lead halo1
-```
-or
 ```
 supernova.py <fluxname> <channel> <expt_config>
 ```
+or, as example
+```
+supernova.py livermore lead halo1
+```
+
+
 
 The output files are stored in the directory containing the snowglobes package under the out/ directory.
 
