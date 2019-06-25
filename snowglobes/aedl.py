@@ -3,6 +3,7 @@ import os
 
 from snowglobes.helper import get_abs_path
 
+
 class AEDL():
 
     def __init__(self):
@@ -31,25 +32,29 @@ class AEDL():
 
     def SetSmearing(self, chan, expt_config):
         for chan_name in chan.name:
-            output_line = "include \"{}\"\n".format(get_abs_path('smear/smear_{}_{}.dat').format(chan_name, expt_config))
+            output_line = "include \"{}\"\n".format(get_abs_path(
+                'smear/smear_{}_{}.dat').format(chan_name, expt_config))
             self.file_obj.write(output_line)
 
     def SetBackground(self, expt_config):
         self.do_bg = False
         self.bg_chan_name = "bg_chan"
-        self.bg_filename = get_abs_path("backgrounds/{}_{}.dat".format(self.bg_chan_name, expt_config))
+        self.bg_filename = get_abs_path(
+            "backgrounds/{}_{}.dat".format(self.bg_chan_name, expt_config))
         if os.path.exists(self.bg_filename):
             self.do_bg = True
             print("Using background file {}".format(self.bg_filename))
         else:
             print("No background file for this configuration")
         if self.do_bg == True:
-            self.file_obj.write("include \"{}\"\n".format(get_abs_path('smear/smear_{}_{}.dat').format(self.bg_chan_name, expt_config)))
+            self.file_obj.write("include \"{}\"\n".format(get_abs_path(
+                'smear/smear_{}_{}.dat').format(self.bg_chan_name, expt_config)))
 
     def SetTargetMass(self, det, expt_config):
         target_mass_raw = det.get_target_mass(expt_config)
         target_mass = '{:13.6f}'.format(target_mass_raw)
-        print("Experiment config: {} Mass: {} kton ".format(expt_config, det.mass[det.get_index(expt_config)]))
+        print("Experiment config: {} Mass: {} kton ".format(
+            expt_config, det.mass[det.get_index(expt_config)]))
         self.file_obj.write("\n/* ####### Detector settings ####### */\n\n")
         self.file_obj.write("$target_mass= {}\n\n".format(target_mass))
 
@@ -57,11 +62,13 @@ class AEDL():
         self.file_obj.write("\n /******** Cross-sections ********/\n\n")
         for chan_name in chan.name:
             self.file_obj.write("cross(#{})<\n".format(chan_name))
-            self.file_obj.write("      @cross_file= \"{}\"\n".format(get_abs_path('xscns/xs_{}.dat'.format(chan_name))))
+            self.file_obj.write("      @cross_file= \"{}\"\n".format(
+                get_abs_path('xscns/xs_{}.dat'.format(chan_name))))
             self.file_obj.write(">\n")
         if self.do_bg == True:
             self.file_obj.write("cross(#{})<\n".format(self.bg_chan_name))
-            self.file_obj.write("     @cross_file= \"{}\"\n".format(get_abs_path('xscns/xs_zero.dat')))
+            self.file_obj.write("     @cross_file= \"{}\"\n".format(
+                get_abs_path('xscns/xs_zero.dat')))
             self.file_obj.write(">\n")
 
     def SetChannels(self, chan, expt_config):
@@ -70,11 +77,13 @@ class AEDL():
             print("Channel file name {} not found".format(chan.chan_file_name))
         for i, chan_name in enumerate(chan.name):
             self.file_obj.write("channel(#{}_signal)<\n".format(chan_name))
-            self.file_obj.write("      @channel= #supernova_flux:  {}:    {}:     {}:    #{}:    #{}_smear\n".format(chan.cp[i], chan.flav[i], chan.flav[i], chan_name, chan_name))
+            self.file_obj.write("      @channel= #supernova_flux:  {}:    {}:     {}:    #{}:    #{}_smear\n".format(
+                chan.cp[i], chan.flav[i], chan.flav[i], chan_name, chan_name))
             eff_file = get_abs_path("effic/effic_{}_{}.dat".format(chan_name, expt_config))
             with open(eff_file) as f_in:
                 eff_file_contents = f_in.read()
-                self.file_obj.write("       @post_smearing_efficiencies = {}\n".format(eff_file_contents))
+                self.file_obj.write(
+                    "       @post_smearing_efficiencies = {}\n".format(eff_file_contents))
                 self.file_obj.write(">\n\n")
 
     def MakeBackgroundChannel(self, expt_config):
@@ -82,7 +91,8 @@ class AEDL():
             cpstate = "-"
             inflav = "e"
             self.file_obj.write("channel(#{}_signal)<\n".format(self.bg_chan_name))
-            self.file_obj.write("      @channel= #supernova_flux:  {}:    {}:     {}:    #{}:    #{}_smear\n".format(cpstate, inflav, inflav, self.bg_chan_name, self.bg_chan_name))
+            self.file_obj.write("      @channel= #supernova_flux:  {}:    {}:     {}:    #{}:    #{}_smear\n".format(
+                cpstate, inflav, inflav, self.bg_chan_name, self.bg_chan_name))
             print(self.bg_filename, "\n")
 
             with open(self.bg_filename) as f_in:
@@ -91,7 +101,7 @@ class AEDL():
                 self.file_obj.write("\n>\n\n")
 
     def Postamble(self):
-        #with open(get_abs_path("glb/postamble.glb")) as f_in:
+        # with open(get_abs_path("glb/postamble.glb")) as f_in:
         #    postamble_contents = f_in.read()
         #    self.file_obj.write(postamble_contents)
 

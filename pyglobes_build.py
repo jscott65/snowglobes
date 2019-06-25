@@ -27,7 +27,7 @@ INCLUDES = """
 
 globes = '#include "{GLB_INCLUDE}/globes/globes.h"'.format(GLB_INCLUDE=SRC_ROOT)
 
-DEFINES= """
+DEFINES = """
     /* Constants */
 
 /* Number of neutrino flavours */
@@ -380,9 +380,9 @@ FFI_BUILDER.cdef(HEADER)
 
 FFI_BUILDER.set_source('pyglobes._pyglobes', MACROS,
 
-libraries=['globes'],
-library_dirs=[lib_dirs] #i.e. globes-config --libs
-)
+                       libraries=['globes'],
+                       library_dirs=[lib_dirs]  # i.e. globes-config --libs
+                       )
 
 if __name__ == '__main__':
     FFI_BUILDER.compile()

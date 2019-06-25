@@ -1,5 +1,7 @@
 from pyglobes._pyglobes import ffi, lib
 from snowglobes.helper import get_abs_path
+
+
 class GLB():
 
     __slots__ = ()
@@ -30,19 +32,25 @@ class GLB():
     def PrintChannelRates(self, fluxname, chan, expt_config, *bgfile):
         for i, chan_name in enumerate(chan.name):
             if bgfile:
-                outfile = get_abs_path("out/{}_bg_chan_{}_events_unweighted.dat".format(fluxname, expt_config))
+                outfile = get_abs_path(
+                    "out/{}_bg_chan_{}_events_unweighted.dat".format(fluxname, expt_config))
             else:
-                outfile = get_abs_path("out/{}_{}_{}_events_unweighted.dat".format(fluxname, chan_name, expt_config))
+                outfile = get_abs_path(
+                    "out/{}_{}_{}_events_unweighted.dat".format(fluxname, chan_name, expt_config))
             print(i, outfile)
             with open(outfile, 'w+') as f_out:
-                ret = self.ShowChannelRates(f_out, 0, chan.num[i], lib.GLB_PRE, lib.GLB_WO_EFF, lib.GLB_WO_BG)
+                ret = self.ShowChannelRates(
+                    f_out, 0, chan.num[i], lib.GLB_PRE, lib.GLB_WO_EFF, lib.GLB_WO_BG)
             if bgfile:
-                outfile_smeared = get_abs_path("out/{}_bg_chan_{}_events_smeared_unweighted.dat".format(fluxname, expt_config))
+                outfile_smeared = get_abs_path(
+                    "out/{}_bg_chan_{}_events_smeared_unweighted.dat".format(fluxname, expt_config))
             else:
-                outfile_smeared = get_abs_path("out/{}_{}_{}_events_smeared_unweighted.dat".format(fluxname, chan_name, expt_config))
+                outfile_smeared = get_abs_path(
+                    "out/{}_{}_{}_events_smeared_unweighted.dat".format(fluxname, chan_name, expt_config))
             print(i, outfile_smeared)
             with open(outfile_smeared, 'w+') as f_out_smeared:
-                ret = self.ShowChannelRates(f_out_smeared, 0, chan.num[i], lib.GLB_POST, lib.GLB_W_EFF, lib.GLB_W_BG)
+                ret = self.ShowChannelRates(
+                    f_out_smeared, 0, chan.num[i], lib.GLB_POST, lib.GLB_W_EFF, lib.GLB_W_BG)
 
     def FreeParams(self, true_values):
         lib.glbFreeParams(true_values)

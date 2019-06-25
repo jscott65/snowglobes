@@ -7,6 +7,7 @@ from snowglobes.globes import GLB
 
 from snowglobes.helper import get_abs_path
 
+
 class Channel():
 
     __slots__ = ('channel', 'chan_file_name', 'name', 'num', 'cp', 'flav', 'factor')
@@ -94,9 +95,11 @@ def supernova(fluxname, chan, expt_config):
 
 def apply_weights(filename, fluxname, chan, expt_config):
     for i, chan_name in enumerate(chan.name):
-        unweightedfilename = "out/{}_{}_{}_events{}_unweighted.dat".format(fluxname, chan_name, expt_config, filename)
-        weightedfilename = "out/{}_{}_{}_events{}.dat".format(fluxname, chan_name, expt_config, filename)
-        data = np.genfromtxt(unweightedfilename, comments = "--", dtype = float, encoding = None)
-        data[:,1] *= chan.num[i]
-        footer = "-----------------\nTotal:   {:f}".format(data[-1,1])
-        np.savetxt(weightedfilename, data[:][:-1], fmt = '%f', footer = footer, comments = '')
+        unweightedfilename = "out/{}_{}_{}_events{}_unweighted.dat".format(
+            fluxname, chan_name, expt_config, filename)
+        weightedfilename = "out/{}_{}_{}_events{}.dat".format(
+            fluxname, chan_name, expt_config, filename)
+        data = np.genfromtxt(unweightedfilename, comments="--", dtype=float, encoding=None)
+        data[:, 1] *= chan.num[i]
+        footer = "-----------------\nTotal:   {:f}".format(data[-1, 1])
+        np.savetxt(weightedfilename, data[:][:-1], fmt='%f', footer=footer, comments='')
