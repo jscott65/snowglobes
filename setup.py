@@ -20,7 +20,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='SNOwGLoBES',
-    version='2.0.15',
+    version='2.0.16',
 
     author='Justin Scott',
     author_email='jscott65@vols.utk.edu',
@@ -29,6 +29,7 @@ setup(
 
     description='SNOwGLoBES: Infrastructure for the Analysis of Neutrino Signatures in Core-Collapse Supernovae',
     long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     classifiers=["Programming Language :: Python :: 3"],
 
     #packages = ['supernova'],
