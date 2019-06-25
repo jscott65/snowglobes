@@ -8,7 +8,7 @@ The snowglobes package can be downloaded directly from pip. However, there are s
 
 ### Prerequisites
 
-##GLoBES
+## GLoBES
 Currently, the GLoBES library must be installed, made, and added to PATH prior to any attempt to install snowglobes.
 
 
@@ -45,7 +45,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:GLB_DIR
 
  REMEMBER to set LD_LIBRARY_PATH  to include GLB_DIR, otherwise the globes lib will not be found at runtime.
 
-##Other dependencies
+## Other dependencies
 * cffi
 
 Pip will take care of this when it installs the package.
@@ -85,14 +85,14 @@ There are three different modes of using the snowglobes package. The first metho
 During installation, the script supernova.py is saved to the python scripts directory. It can be executed via the command line from any directory.
 
 ```
-supernova.py <fluxname> <channel> <expt_config>
+supernova.py <fluxname> <channel> <expt_config> --weight
 ```
 or, as example
 ```
 supernova.py livermore lead halo1
 ```
 
-
+By adding the '--weight' command, the weighting factors will be applied to the output files.
 
 The output files are stored in the directory containing the snowglobes package under the out/ directory.
 
