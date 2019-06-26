@@ -57,7 +57,7 @@ def supernova(fluxname, chan, expt_config):
         print("Number of channels found: {}".format(len(chan.name)))
 
     else:
-        print("Cannot open file")
+        print("Cannot open channel file")
 
     true_values = glb.AllocParams()
     test_values = glb.AllocParams()
