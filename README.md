@@ -68,13 +68,13 @@ After installation, verify that the directory the package is saved in is on the 
 
 ```
 echo $PATH
-echo $PYTHON_PATH
+echo $PYTHONPATH
 ```
 
 If it is not on your paths, add it as so
 
 ```
-export PYTHON_PATH=$PYTHON_PATH:/path/to/snowglobes/
+export PYTHONPATH=$PYTHONPATH:/path/to/snowglobes/
 export PATH=$PATH:/path/to/snowglobes/
 ```
 
