@@ -10,9 +10,12 @@ jobs:
         sudo make
         sudo make install
         sudo ldconfig
+        cd ..
     - task: UsePythonVersion@0
     - bash: |
-        python -m pip install --upgrade pip
+        python -m pip install --upgrade pip setuptools wheel
+        pip install six
+        pip install cffi
         pip install cibuildwheel==0.11.1
         cibuildwheel --output-dir wheelhouse .
     - task: PublishBuildArtifacts@1
