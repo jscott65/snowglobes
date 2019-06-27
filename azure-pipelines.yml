@@ -1,3 +1,7 @@
+variables:
+  CIBW_SKIP: cp27
+
+
 jobs:
 - job: linux
   pool: {vmImage: 'Ubuntu-16.04'}
