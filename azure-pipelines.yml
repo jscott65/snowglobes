@@ -1,6 +1,8 @@
 jobs:
 - job: linux
   pool: {vmImage: 'Ubuntu-16.04'}
+  variables:
+    CIBW_SKIP: cp27-*
   strategy:
     matrix:
       Python35:
