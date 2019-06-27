@@ -1,6 +1,16 @@
 jobs:
 - job: linux
   pool: {vmImage: 'Ubuntu-16.04'}
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
+    maxParallel: 3
+
   steps:
     - bash: |
         sudo apt-get update && sudo apt-get install -y libgsl-dev
@@ -13,7 +23,7 @@ jobs:
         cd ..
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: 'pypy3'
+        versionSpec: '$(python.version)'
     - bash: |
         python -m pip install --upgrade pip setuptools wheel
         pip install six
