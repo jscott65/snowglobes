@@ -7,9 +7,9 @@ jobs:
         curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
         cd globes-3.2.17
         ./configure
-        make
-        make install
-        ldconfig
+        sudo make
+        sudo make install
+        sudo ldconfig
     - task: UsePythonVersion@0
     - bash: |
         python -m pip install --upgrade pip
