@@ -13,7 +13,7 @@ jobs:
         cd ..
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.7'
+        versionSpec: 'pypy3'
     - bash: |
         python -m pip install --upgrade pip setuptools wheel
         pip install six
