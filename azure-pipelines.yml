@@ -38,7 +38,7 @@ jobs:
         ls
         cd globes
         echo 'ld_run'
-        echo $LD_RUN_PATH
+        echo $LD_RUN_PATH 
         echo $LD_LIBRARY_PATH
         ls
         echo 'printdir'
@@ -67,6 +67,7 @@ jobs:
         globes-config --include
 
         export PATH=/home/vsts/work/1/a/globes:$PATH
+        globes-config --include
         python -m pip install --upgrade pip setuptools wheel
         pip install cffi
         pip install cibuildwheel==0.11.1
