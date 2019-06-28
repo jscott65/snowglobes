@@ -37,9 +37,9 @@ jobs:
         cd globes
         ls
     - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-        addToPath: true
+      #inputs:
+      #  versionSpec: '$(python.version)'
+      #  addToPath: true
     - bash: |
         python -m pip install --upgrade pip setuptools wheel
         pip install cffi
