@@ -53,6 +53,7 @@ jobs:
         addToPath: true
     - bash: |
         pwd
+        globes-config --include
         python -m pip install --upgrade pip setuptools wheel
         pip install cffi
         pip install cibuildwheel==0.11.1
