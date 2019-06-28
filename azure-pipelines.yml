@@ -20,7 +20,7 @@ jobs:
         sudo apt-get update && sudo apt-get install -y libgsl-dev
         curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
         cd globes-3.2.17
-        export GLB_DIR=./globes
+        export GLB_DIR=/usr/globes
         ./configure --prefix=$GLB_DIR
         sudo make
         sudo make install
