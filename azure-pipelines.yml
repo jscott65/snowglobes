@@ -2,7 +2,7 @@ jobs:
 - job: linux
   pool: {vmImage: 'Ubuntu-16.04'}
   variables:
-    CIBW_BUILD: 'cp37'
+    CIBW_BUILD: 'cp35' - 'cp37'
   strategy:
     matrix:
       Python35:
@@ -26,6 +26,7 @@ jobs:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(python.version)'
+        addToPath: true
     - bash: |
         python -m pip install --upgrade pip setuptools wheel
         pip install six
