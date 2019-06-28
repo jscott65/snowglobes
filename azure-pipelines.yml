@@ -27,7 +27,8 @@ jobs:
         sudo ldconfig
         cd ..
         ls
-
+        echo $LD_RUN_PATH
+        echo $LD_LIBRARY_PATH
         export PATH=$GLB_DIR/bin:$PATH
         echo $PATH
         globes-config --include
@@ -35,6 +36,8 @@ jobs:
         cd /usr/globes/include
         ls
         cd globes
+        echo $LD_RUN_PATH
+        echo $LD_LIBRARY_PATH
         ls
     - task: UsePythonVersion@0
       #inputs:
