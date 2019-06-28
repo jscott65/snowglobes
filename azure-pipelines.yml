@@ -31,7 +31,7 @@ jobs:
         export PATH=$GLB_DIR/bin:$PATH
         echo $PATH
         globes-config --include
-
+        pwd
         cd /usr/globes/include
         ls
         cd globes
