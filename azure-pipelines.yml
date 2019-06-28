@@ -53,11 +53,13 @@ jobs:
         path: '/usr/globes'
         artifact: 'globeslib'
 
-
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(python.version)'
         addToPath: true
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: 'globeslib'
     - bash: |
         pwd
         globes-config --include
