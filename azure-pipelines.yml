@@ -3,7 +3,7 @@ jobs:
   pool: {vmImage: 'Ubuntu-16.04'}
   variables:
     CIBW_BUILD: 'cp35'
-    CIBW_PLATFORM: 'linux'
+    #CIBW_PLATFORM: 'linux'
   strategy:
     matrix:
       Python35:
@@ -33,7 +33,7 @@ jobs:
         pip install six
         pip install cffi
         pip install cibuildwheel==0.11.1
-        cibuildwheel --output-dir wheelhouse --platform linux.
+        cibuildwheel --output-dir wheelhouse --platform linux .
     - task: PublishBuildArtifacts@1
       inputs: {pathtoPublish: 'wheelhouse'}
 - job: macos
