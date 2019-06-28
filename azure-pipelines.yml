@@ -27,10 +27,10 @@ jobs:
         sudo ldconfig
         cd ..
         ls
-        globes-config --include
+
         export PATH=$GLB_DIR/bin:$PATH
         echo $PATH
-        globes-config --libs
+        globes-config --include
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(python.version)'
