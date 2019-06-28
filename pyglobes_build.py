@@ -1,7 +1,6 @@
 import os
 import re
 import subprocess
-import six
 import os.path
 
 from cffi import FFI
