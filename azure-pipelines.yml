@@ -44,11 +44,11 @@ jobs:
         pwd
         echo $(Build.SourcesDirectory)
         echo $(Agent.BuildDirectory)
-        
+
     - task: UsePythonVersion@0
-      #inputs:
-      #  versionSpec: '$(python.version)'
-      #  addToPath: true
+      inputs:
+        versionSpec: '$(python.version)'
+        addToPath: true
     - bash: |
         pwd
         python -m pip install --upgrade pip setuptools wheel
