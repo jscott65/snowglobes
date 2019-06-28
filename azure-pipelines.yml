@@ -26,6 +26,7 @@ jobs:
         sudo ldconfig
         cd ..
         ls
+        globes-config --libs
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(python.version)'
