@@ -30,6 +30,7 @@ jobs:
         globes-config --libs
         export PATH=$GLB_DIR:$PATH
         echo $PATH
+        globes-config --libs
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(python.version)'
