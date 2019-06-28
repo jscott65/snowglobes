@@ -59,7 +59,9 @@ jobs:
         addToPath: true
     - task: DownloadPipelineArtifact@2
       inputs:
+        source: 'current'
         artifact: 'globeslib'
+        path: '$(System.ArtifactsDirectory)/globes'
     - bash:
 
         cd $(Pipeline.Workspace)
