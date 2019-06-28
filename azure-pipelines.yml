@@ -47,11 +47,11 @@ jobs:
         echo $(Build.SourcesDirectory)
         echo $(Agent.BuildDirectory)
         cd $(Build.SourcesDirectory)
-        mkdir globes
+
     - task: PublishPipelineArtifact@0
       inputs:
         artifactName: 'globeslib'
-        targetPath: 'globes'
+        targetPath: '/usr/globes'
 
     - task: UsePythonVersion@0
       inputs:
@@ -67,7 +67,7 @@ jobs:
         cibuildwheel --output-dir wheelhouse --platform linux
         ls -la
         cd wheelhouse
-        ls -la 
+        ls -la
     - task: PublishBuildArtifacts@1
       inputs: {pathtoPublish: 'wheelhouse'}
 - job: macos
