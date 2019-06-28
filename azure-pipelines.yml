@@ -31,6 +31,11 @@ jobs:
         export PATH=$GLB_DIR/bin:$PATH
         echo $PATH
         globes-config --include
+
+        cd /usr/globes/include
+        ls
+        cd globes
+        ls
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(python.version)'
