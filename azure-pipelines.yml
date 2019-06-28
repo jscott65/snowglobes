@@ -48,7 +48,7 @@ jobs:
         echo $(Agent.BuildDirectory)
         cd $(Build.SourcesDirectory)
 
-    - task: PublishPipelineArtifact@0
+    - task: PublishPipelineArtifact@1
       inputs:
         path: '/usr/globes'
         artifact: 'globeslib'
