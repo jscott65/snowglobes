@@ -28,7 +28,7 @@ jobs:
         cd ..
         ls
         globes-config --libs
-        export PATH=GLB_DIR:/$PATH
+        export PATH=$GLB_DIR:/$PATH
         echo $PATH
     - task: UsePythonVersion@0
       inputs:
