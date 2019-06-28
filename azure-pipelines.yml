@@ -39,11 +39,15 @@ jobs:
         echo $LD_RUN_PATH
         echo $LD_LIBRARY_PATH
         ls
+        echo 'printdir'
+        echo 'printdir'
+        pwd
     - task: UsePythonVersion@0
       #inputs:
       #  versionSpec: '$(python.version)'
       #  addToPath: true
     - bash: |
+        pwd
         python -m pip install --upgrade pip setuptools wheel
         pip install cffi
         pip install cibuildwheel==0.11.1
