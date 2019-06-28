@@ -2,7 +2,7 @@ jobs:
 - job: linux
   pool: {vmImage: 'Ubuntu-16.04'}
   variables:
-    CIBW_BUILD: 'cp35' 'cp37'
+    CIBW_SKIP: 'cp27'
     CIBW_BUILD_VERBOSITY: 3
     #CIBW_PLATFORM: 'linux'
   strategy:
