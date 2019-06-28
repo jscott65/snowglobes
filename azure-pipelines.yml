@@ -60,7 +60,11 @@ jobs:
     - task: DownloadPipelineArtifact@2
       inputs:
         artifact: 'globeslib'
-    - bash: |
+    - bash:
+
+        cd /home/vsts/work/1
+        ls
+        
         pwd
         globes-config --include
         python -m pip install --upgrade pip setuptools wheel
