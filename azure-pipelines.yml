@@ -27,7 +27,7 @@ jobs:
         sudo ldconfig
         cd ..
         ls
-        globes-config --ltlibs
+        globes-config --include
         export PATH=$GLB_DIR/bin:$PATH
         echo $PATH
         globes-config --libs
