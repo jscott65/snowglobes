@@ -62,9 +62,8 @@ jobs:
         artifact: 'globeslib'
     - bash:
 
-        cd /home/vsts/work/1
+        cd $(Pipeline.Workspace)
         ls
-        
         pwd
         globes-config --include
         python -m pip install --upgrade pip setuptools wheel
