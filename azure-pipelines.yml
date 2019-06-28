@@ -27,6 +27,7 @@ jobs:
         cd ..
         ls
         globes-config --libs
+        echo $PATH
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(python.version)'
