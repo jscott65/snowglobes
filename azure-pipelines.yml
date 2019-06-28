@@ -50,8 +50,9 @@ jobs:
 
     - task: PublishPipelineArtifact@0
       inputs:
-        artifactName: 'globeslib'
-        targetPath: '/usr/globes'
+        path: '/usr/globes'
+        artifact: 'globeslib'
+
 
     - task: UsePythonVersion@0
       inputs:
