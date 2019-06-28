@@ -2,7 +2,7 @@ jobs:
 - job: linux
   pool: {vmImage: 'Ubuntu-16.04'}
   variables:
-    CIBW_BUILD: cp36
+    CIBW_BUILD: 'cp37'
   strategy:
     matrix:
       Python35:
