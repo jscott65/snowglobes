@@ -63,9 +63,6 @@ jobs:
         artifact: 'globeslib'
         path: '$(System.ArtifactsDirectory)/globes'
     - bash:
-
-        cd $(Pipeline.Workspace)
-        ls
         pwd
         globes-config --include
         python -m pip install --upgrade pip setuptools wheel
