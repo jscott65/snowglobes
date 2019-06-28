@@ -24,7 +24,7 @@ INCLUDES = """
 #include <ctype.h>
 """
 
-globes = '#include "{GLB_INCLUDE}/globes.h"'.format(GLB_INCLUDE='./globes-3.2.17/globes')
+globes = '#include "{GLB_INCLUDE}/globes.h"'.format(GLB_INCLUDE='/globes-3.2.17/globes')
 
 DEFINES = """
     /* Constants */
