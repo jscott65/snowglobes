@@ -24,6 +24,7 @@ jobs:
         sudo make install
         sudo ldconfig
         cd ..
+        ls
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(python.version)'
@@ -33,7 +34,9 @@ jobs:
         pip install six
         pip install cffi
         pip install cibuildwheel==0.11.1
-        cibuildwheel --output-dir wheelhouse --platform linux .
+        ls
+        cibuildwheel --output-dir wheelhouse --platform linux 
+        ls .
     - task: PublishBuildArtifacts@1
       inputs: {pathtoPublish: 'wheelhouse'}
 - job: macos
