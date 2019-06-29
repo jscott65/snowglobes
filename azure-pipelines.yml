@@ -2,6 +2,10 @@ jobs:
 - job: linux
   pool: {vmImage: 'Ubuntu-16.04'}
   variables:
+    GLB_DIR: /usr/globes
+    GLB_INCLUDE: GLB_DIR:include
+    GLB_LIB: GLB_DIR:include
+    GLB_BIN: GLB_DIR:bin
     CIBW_SKIP: cp27-*
     CIBW_BUILD_VERBOSITY: 3
     #CIBW_PLATFORM: 'linux'
@@ -16,82 +20,104 @@ jobs:
     maxParallel: 3
 
   steps:
-    - bash: |
-        sudo apt-get update && sudo apt-get install -y libgsl-dev
-        curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
-        cd globes-3.2.17
-        export GLB_DIR=/usr/globes
-        ./configure --prefix=$GLB_DIR
-        sudo make
-        sudo make install
-        sudo ldconfig
-        cd ..
-        ls
-        echo 'ld_run'
-        echo $LD_RUN_PATH
-        echo $LD_LIBRARY_PATH
-        export PATH=$GLB_DIR/bin:$PATH
-        echo $PATH
-        globes-config --include
-        pwd
-        cd /usr/globes/include
-        ls
-        cd globes
-        echo 'ld_run'
-        echo $LD_RUN_PATH 
-        echo $LD_LIBRARY_PATH
-        ls
-        echo 'printdir'
-        echo 'printdir'
-        pwd
-        echo $(Build.SourcesDirectory)
-        echo $(Agent.BuildDirectory)
-        cd $(Build.SourcesDirectory)
+  - bash: sudo apt-get update && sudo apt-get install -y libgsl-dev # script path or inline
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: download and update libgsl-dev #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
-    - task: PublishPipelineArtifact@1
-      inputs:
-        path: '/usr/globes'
-        artifact: 'globeslib'
+  - bash: curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvfz
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: dowload and extract globes library #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(python.version)'
-        addToPath: true
-    - task: DownloadPipelineArtifact@2
-      inputs:
-        source: 'current'
-        artifact: 'globeslib'
-        path: '$(System.ArtifactsDirectory)/globes'
-    - bash: |
-        pwd
-        globes-config --include
+  - bash: ./configure --prefix=$(GLB_DIR)
+    workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
+    displayName: configure globes library #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
-        export PATH=/home/vsts/work/1/a/globes:$PATH
-        globes-config --include
-        python -m pip install --upgrade pip setuptools wheel
-        pip install cffi
-        pip install cibuildwheel==0.11.1
-        ls
-        cibuildwheel --output-dir wheelhouse --platform linux
-        ls -la
-        cd wheelhouse
-        ls -la
-    - task: PublishBuildArtifacts@1
-      inputs: {pathtoPublish: 'wheelhouse'}
-- job: macos
-  pool: {vmImage: 'macOS-10.13'}
-  steps:
-    - bash: |
-        curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
-        cd globes-3.2.17
-        ./configure
-        make
-        make install
-        ldconfig
-    - task: UsePythonVersion@0
-    - bash: |
-        python -m pip install --upgrade pip
-        pip install cibuildwheel==0.11.1
-        cibuildwheel --output-dir wheelhouse .
-    - task: PublishBuildArtifacts@1
-      inputs: {pathtoPublish: 'wheelhouse'}
+  - bash: sudo make
+    workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
+    displayName: make globes library #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
+
+  - bash: sudo make install
+    workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
+    displayName: install globes library #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
+
+  - bash: sudo ldconfig
+    workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
+    displayName: run ldconfig #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
+
+  - bash: export PATH=$(GLB_BIN):$PATH
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: prepend GLB_BIN to PATH #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
+
+  - bash: export LD_LIBRARY_PATH=$(GLB_BIN):$LD_LIBRARY_PATH
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: prepend GLB_BIN to PATH #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
+
+  - task: PublishPipelineArtifact@1 # string  # reference to a task and version, e.g. "VSBuild@1"
+    displayName: create globes library artifact # string  # friendly name displayed in the UI
+    name: # string  # identifier for this step (A-Z, a-z, 0-9, and underscore)
+    condition: # string
+    continueOnError: # boolean  # 'true' if future steps should run even if this step fails; defaults to 'false'
+    enabled: # boolean  # whether or not to run this step; defaults to 'true'
+    timeoutInMinutes: # number
+    inputs: # { string: string }  # task-specific inputs
+      path: $(GLB_DIR)
+      artifact: globeslib
+    env: # { string: string }  # list of environment variables to add
+
+  # Use Python Version
+  # Retrieves the specified version of Python from the tool cache. Optionally add it to PATH.
+  - task: UsePythonVersion@0
+    displayName: set python version # string  # friendly name displayed in the UI
+    inputs:
+      versionSpec: '$(python.version)' #'3.x'
+      addToPath: true
+      #architecture: 'x64' # Options: x86, x64 (this argument applies only on Windows agents)
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      source: current
+      artifact: globeslib
+      # path: '$(System.ArtifactsDirectory)/globes' By default, files are downloaded to $(Pipeline.Workspace)/{artifact}
+
+  - bash: python -m pip install --upgrade pip setuptools wheel
+    workingDirectory: $(Pipeline.Workspace) #
+    displayName: prepend GLB_BIN to PATH #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
+
+  - bash: pip install cffi
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: pip cffi #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
+
+  - bash: pip install cibuildwheel==0.11.1
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: pip cibuildwheel #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add pip install cibuildwheel==0.11.1
+
+  - bash: cibuildwheel --output-dir wheelhouse --platform linux
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: pip cibuildwheel #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add pip install cibuildwheel==0.11.1
+
+  - task: PublishBuildArtifacts@1
+    inputs: {pathtoPublish: 'wheelhouse'}
