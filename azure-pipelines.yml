@@ -110,7 +110,7 @@ jobs:
     failOnStderr: false #
     #env:  # mapping of environment variables to add
   - bash: ls
-    workingDirectory: $(System.DefaultWorkingDirectory)/globes/include #
+    workingDirectory: $(System.DefaultWorkingDirectory)/globes/include/globes #
     displayName: pwd #
     failOnStderr: false #
     #env:  # mapping of environment variables to add
