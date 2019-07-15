@@ -68,17 +68,11 @@ jobs:
     failOnStderr: false #
     #env: # mapping of environment variables to add
 
-  - bash: echo $PATH
-    workingDirectory: $(System.DefaultWorkingDirectory) #
-    displayName: echo $PATH #
-    #env: # mapping of environment variables to add
-
-
   - task: PublishPipelineArtifact@1 # string  # reference to a task and version, e.g. "VSBuild@1"
     displayName: create globes library artifact # string  # friendly name displayed in the UI
     #name: # string  # identifier for this step (A-Z, a-z, 0-9, and underscore)
     inputs: # { string: string }  # task-specific inputs
-      path: $(System.DefaultWorkingDirectory)
+      path: $(GLB_DIR)
       artifact: globeslib
     #env: # { string: string }  # list of environment variables to add
 
