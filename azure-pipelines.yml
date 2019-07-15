@@ -18,7 +18,7 @@ steps:
   displayName: download and extract globes library
   failOnStderr: false
 
-- bash: ./configure --prefix=$(System.DefaultWorkingDirectory)/globes
+- bash: ./configure
   workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
   displayName: configure globes library
   failOnStderr: false
