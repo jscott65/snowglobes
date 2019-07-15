@@ -39,6 +39,6 @@ steps:
   failOnStderr: false
 
 - bash: globes-config --include
-  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
+  workingDirectory: $(System.DefaultWorkingDirectory)
   displayName: includes
   failOnStderr: false
