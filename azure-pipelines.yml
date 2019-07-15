@@ -68,11 +68,16 @@ jobs:
     failOnStderr: false #
     #env: # mapping of environment variables to add
 
+  - bash: echo $PATH
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: globes-config --include #
+    #env: # mapping of environment variables to add
+
   - bash: globes-config --include
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: globes-config --include #
-    failOnStderr: false #
     #env: # mapping of environment variables to add
+
 
   - task: PublishPipelineArtifact@1 # string  # reference to a task and version, e.g. "VSBuild@1"
     displayName: create globes library artifact # string  # friendly name displayed in the UI
@@ -81,11 +86,6 @@ jobs:
       path: $(GLB_DIR)
       artifact: globeslib
     #env: # { string: string }  # list of environment variables to add
-  - bash: globes-config --include
-    workingDirectory: $(System.DefaultWorkingDirectory) #
-    displayName: globes-config --include #
-    failOnStderr: false #
-    #env: # mapping of environment variables to add
 
   # Use Python Version
   # Retrieves the specified version of Python from the tool cache. Optionally add it to PATH.
@@ -102,11 +102,6 @@ jobs:
       source: current
       artifact: globeslib
       path: '$(System.DefaultWorkingDirectory)/globes' #By default, files are downloaded to $(Pipeline.Workspace)/{artifact}
-  - bash: globes-config --include
-    workingDirectory: $(System.DefaultWorkingDirectory) #
-    displayName: globes-config --include #
-    failOnStderr: false #
-    #env: # mapping of environment variables to add
 
   - bash: python -m pip install --upgrade pip setuptools wheel
     workingDirectory: $(System.DefaultWorkingDirectory)
