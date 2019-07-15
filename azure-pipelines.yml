@@ -1,10 +1,20 @@
 
 pool:
   vmImage: 'ubuntu-16.04'
-  
+
 variables:
   CIBW_SKIP: cp27-*
   CIBW_BUILD_VERBOSITY: 3
+  CIBW_BEFORE_BUILD: |
+    sudo apt-get update && sudo apt-get install -y libgsl-dev
+    curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
+    cd globes-3.2.17
+    ./configure
+    sudo make
+    sudo make install
+    sudo ldconfig
+    globes-config --include
+    pip install cffi
 
 steps:
 
@@ -12,65 +22,65 @@ steps:
   inputs:
     versionSpec: '3.7'
 
-- bash: sudo apt-get update && sudo apt-get install -y libgsl-dev
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: download and update libgsl-dev
-  failOnStderr: false
+#- bash: sudo apt-get update && sudo apt-get install -y libgsl-dev
+#  workingDirectory: $(System.DefaultWorkingDirectory)
+#  displayName: download and update libgsl-dev
+#  failOnStderr: false
 
-- bash: curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: download and extract globes library
-  failOnStderr: false
+#- bash: curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
+#  workingDirectory: $(System.DefaultWorkingDirectory)
+#  displayName: download and extract globes library
+#  failOnStderr: false
 
-- bash: ./configure
-  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
-  displayName: configure globes library
-  failOnStderr: false
+#- bash: ./configure
+#  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
+#  displayName: configure globes library
+#  failOnStderr: false
 
-- bash: sudo make
-  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
-  displayName: make globes library
-  failOnStderr: false
+#- bash: sudo make
+#  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
+#  displayName: make globes library
+#  failOnStderr: false
 
-- bash: sudo make install
-  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
-  displayName: install globes library
-  failOnStderr: false
+#- bash: sudo make install
+#  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
+#  displayName: install globes library
+#  failOnStderr: false
 
-- bash: sudo ldconfig
-  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
-  displayName: run ldconfig
-  failOnStderr: false
+#- bash: sudo ldconfig
+#  workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17
+#  displayName: run ldconfig
+#  failOnStderr: false
 
-- bash: globes-config --include
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: includes
-  failOnStderr: false
+#- bash: globes-config --include
+#  workingDirectory: $(System.DefaultWorkingDirectory)
+#  displayName: includes
+#  failOnStderr: false
 
 - bash: python -m pip install --upgrade pip setuptools wheel
   workingDirectory: $(System.DefaultWorkingDirectory)
   displayName: pip install/upgrade setuptools, wheel
   failOnStderr: false
 
-- bash: pip install cffi
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: pip cffi
-  failOnStderr: false
+#- bash: pip install cffi
+#  workingDirectory: $(System.DefaultWorkingDirectory)
+#  displayName: pip cffi
+#  failOnStderr: false
 
-- bash: ls -la
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: ls
-  failOnStderr: false
+#- bash: ls -la
+#  workingDirectory: $(System.DefaultWorkingDirectory)
+#  displayName: ls
+#  failOnStderr: false
 
-- bash: ls
-  workingDirectory: /usr/local/include
-  displayName: ls
-  failOnStderr: false
+#- bash: ls
+#  workingDirectory: /usr/local/include
+#  displayName: ls
+#  failOnStderr: false
 
-- bash: ls
-  workingDirectory: /usr/local/include/globes
-  displayName: ls
-  failOnStderr: false
+#- bash: ls
+#  workingDirectory: /usr/local/include/globes
+#  displayName: ls
+#  failOnStderr: false
 
 - bash: pip install cibuildwheel==0.11.1
   workingDirectory: $(System.DefaultWorkingDirectory)
