@@ -70,12 +70,7 @@ jobs:
 
   - bash: echo $PATH
     workingDirectory: $(System.DefaultWorkingDirectory) #
-    displayName: globes-config --include #
-    #env: # mapping of environment variables to add
-
-  - bash: globes-config --include
-    workingDirectory: $(System.DefaultWorkingDirectory) #
-    displayName: globes-config --include #
+    displayName: echo $PATH #
     #env: # mapping of environment variables to add
 
 
@@ -83,7 +78,7 @@ jobs:
     displayName: create globes library artifact # string  # friendly name displayed in the UI
     #name: # string  # identifier for this step (A-Z, a-z, 0-9, and underscore)
     inputs: # { string: string }  # task-specific inputs
-      path: $(GLB_DIR)
+      path: $(System.DefaultWorkingDirectory)
       artifact: globeslib
     #env: # { string: string }  # list of environment variables to add
 
