@@ -45,5 +45,10 @@ steps:
 
 - bash: python -m pip install --upgrade pip setuptools wheel
   workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: pip install/upgrade setuptools, wheel #
+  displayName: pip install/upgrade setuptools, wheel
+  failOnStderr: false
+
+- bash: pip install cffi
+  workingDirectory: $(System.DefaultWorkingDirectory)
+  displayName: pip cffi
   failOnStderr: false
