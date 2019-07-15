@@ -79,10 +79,10 @@ steps:
 #  displayName: pip cffi
 #  failOnStderr: false
 
-#- bash: ls -la
-#  workingDirectory: $(System.DefaultWorkingDirectory)
-#  displayName: ls
-#  failOnStderr: false
+- bash: ls -la
+  workingDirectory: $(System.DefaultWorkingDirectory)
+  displayName: ls
+  failOnStderr: false
 
 #- bash: ls
 #  workingDirectory: /usr/local/include
