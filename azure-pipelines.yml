@@ -58,6 +58,16 @@ steps:
   displayName: ls
   failOnStderr: false
 
+- bash: ls
+  workingDirectory: /usr/local/include
+  displayName: ls
+  failOnStderr: false
+
+- bash: ls
+  workingDirectory: /usr/local/include/globes
+  displayName: ls
+  failOnStderr: false
+
 - bash: pip install cibuildwheel==0.11.1
   workingDirectory: $(System.DefaultWorkingDirectory)
   displayName: pip cibuildwheel
