@@ -4,7 +4,7 @@ jobs:
   variables:
     GLB_DIR: /usr/globes
     GLB_INCLUDE: GLB_DIR:include
-    GLB_LIB: GLB_DIR:include
+    GLB_LIB: GLB_DIR:lib
     GLB_BIN: GLB_DIR:bin
     CIBW_SKIP: cp27-*
     CIBW_BUILD_VERBOSITY: 3
