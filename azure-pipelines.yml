@@ -4,7 +4,7 @@ jobs:
   variables:
     GLB_DIR: /usr/globes
     GLB_INCLUDE: GLB_DIR:include
-    GLB_LIB: GLB_DIR:lib
+    GLB_LIB: GLB_DIR:include
     GLB_BIN: GLB_DIR:bin
     CIBW_SKIP: cp27-*
     CIBW_BUILD_VERBOSITY: 3
@@ -23,40 +23,62 @@ jobs:
   - bash: sudo apt-get update && sudo apt-get install -y libgsl-dev # script path or inline
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: download and update libgsl-dev #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: dowload and extract globes library #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: ./configure --prefix=$(GLB_DIR)
     workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
     displayName: configure globes library #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: sudo make
     workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
     displayName: make globes library #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: sudo make install
     workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
     displayName: install globes library #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: sudo ldconfig
     workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
     displayName: run ldconfig #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: export PATH=$(GLB_BIN):$PATH
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: prepend GLB_BIN to PATH #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: export LD_LIBRARY_PATH=$(GLB_BIN):$LD_LIBRARY_PATH
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: prepend GLB_BIN to PATH #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - task: PublishPipelineArtifact@1 # string  # reference to a task and version, e.g. "VSBuild@1"
     displayName: create globes library artifact # string  # friendly name displayed in the UI
-    inputs: # task-specific inputs
+    name: # string  # identifier for this step (A-Z, a-z, 0-9, and underscore)
+    condition: # string
+    continueOnError: # boolean  # 'true' if future steps should run even if this step fails; defaults to 'false'
+    enabled: # boolean  # whether or not to run this step; defaults to 'true'
+    timeoutInMinutes: # number
+    inputs: # { string: string }  # task-specific inputs
       path: $(GLB_DIR)
       artifact: globeslib
+    env: # { string: string }  # list of environment variables to add
 
   # Use Python Version
   # Retrieves the specified version of Python from the tool cache. Optionally add it to PATH.
@@ -71,23 +93,31 @@ jobs:
     inputs:
       source: current
       artifact: globeslib
-      # path: '$(System.ArtifactsDirectory)/globes' By default, files are downloaded to $(Pipeline.Workspace)/{artifact}
+      path: '$(System.ArtifactsDirectory)/globes' #By default, files are downloaded to $(Pipeline.Workspace)/{artifact}
 
   - bash: python -m pip install --upgrade pip setuptools wheel
-    workingDirectory: $(Pipeline.Workspace) #
+    workingDirectory: $(System.DefaultWorkingDirectory)
     displayName: prepend GLB_BIN to PATH #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: pip install cffi
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: pip cffi #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add
 
   - bash: pip install cibuildwheel==0.11.1
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: pip cibuildwheel #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add pip install cibuildwheel==0.11.1
 
   - bash: cibuildwheel --output-dir wheelhouse --platform linux
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: pip cibuildwheel #
+    failOnStderr: true #
+    env:  # mapping of environment variables to add pip install cibuildwheel==0.11.1
 
   - task: PublishBuildArtifacts@1
     inputs: {pathtoPublish: 'wheelhouse'}
