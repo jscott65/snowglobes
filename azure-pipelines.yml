@@ -1,6 +1,8 @@
 
 pool:
   vmImage: 'ubuntu-16.04'
+variables:
+  CIBW_SKIP: cp27-*
 
 steps:
 
