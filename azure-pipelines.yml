@@ -52,3 +52,8 @@ steps:
   workingDirectory: $(System.DefaultWorkingDirectory)
   displayName: pip cffi
   failOnStderr: false
+
+- bash: ls -la
+  workingDirectory: $(System.DefaultWorkingDirectory)
+  displayName: ls
+  failOnStderr: false
