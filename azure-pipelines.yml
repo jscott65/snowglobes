@@ -64,7 +64,7 @@ jobs:
 
   - bash: export LD_LIBRARY_PATH=$(GLB_BIN):$LD_LIBRARY_PATH
     workingDirectory: $(System.DefaultWorkingDirectory) #
-    displayName: prepend GLB_BIN to PATH #
+    displayName: prepend GLB_BIN to LD_LIBRARY_PATH #
     failOnStderr: false #
     #env: # mapping of environment variables to add
 
@@ -86,10 +86,11 @@ jobs:
       #architecture: 'x64' # Options: x86, x64 (this argument applies only on Windows agents)
 
   - task: DownloadPipelineArtifact@2
+    displayName: download the globes artifact
     inputs:
       source: current
       artifact: globeslib
-      path: '$(System.ArtifactsDirectory)/globes' #By default, files are downloaded to $(Pipeline.Workspace)/{artifact}
+      path: '$(System.DefaultWorkingDirectory)/globes' #By default, files are downloaded to $(Pipeline.Workspace)/{artifact}
 
   - bash: python -m pip install --upgrade pip setuptools wheel
     workingDirectory: $(System.DefaultWorkingDirectory)
