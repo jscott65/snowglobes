@@ -103,3 +103,12 @@ steps:
   workingDirectory: $(System.DefaultWorkingDirectory)
   displayName: run cibuildwheel with output ./wheelhouse
   failOnStderr: false
+
+- bash: ls -la
+  workingDirectory: $(System.DefaultWorkingDirectory)
+  displayName: ls
+  failOnStderr: false
+
+
+  - task: PublishBuildArtifacts@1
+    inputs: {pathtoPublish: 'wheelhouse'}
