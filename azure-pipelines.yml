@@ -104,6 +104,17 @@ jobs:
     failOnStderr: false #
     #env:  # mapping of environment variables to add
 
+  - bash: pwd
+    workingDirectory: $(System.DefaultWorkingDirectory) #
+    displayName: pwd #
+    failOnStderr: false #
+    #env:  # mapping of environment variables to add
+  - bash: ls
+    workingDirectory: $(System.DefaultWorkingDirectory)/globes #
+    displayName: pwd #
+    failOnStderr: false #
+    #env:  # mapping of environment variables to add
+
   - bash: pip install cibuildwheel==0.11.1
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: pip cibuildwheel #
