@@ -42,3 +42,8 @@ steps:
   workingDirectory: $(System.DefaultWorkingDirectory)
   displayName: includes
   failOnStderr: false
+
+- bash: python -m pip install --upgrade pip setuptools wheel
+  workingDirectory: $(System.DefaultWorkingDirectory)
+  displayName: pip install/upgrade setuptools, wheel #
+  failOnStderr: false
