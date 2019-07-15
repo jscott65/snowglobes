@@ -110,5 +110,5 @@ steps:
   failOnStderr: false
 
 
-  - task: PublishBuildArtifacts@1
-    inputs: {pathtoPublish: 'wheelhouse'}
+- task: PublishBuildArtifacts@1
+  inputs: {pathtoPublish: 'wheelhouse'}
