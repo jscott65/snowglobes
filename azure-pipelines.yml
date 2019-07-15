@@ -62,3 +62,8 @@ steps:
   workingDirectory: $(System.DefaultWorkingDirectory)
   displayName: pip cibuildwheel
   failOnStderr: false
+
+- bash: cibuildwheel --output-dir wheelhouse
+  workingDirectory: $(System.DefaultWorkingDirectory) #
+  displayName: run cibuildwheel with output ./wheelhouse #
+  failOnStderr: false
