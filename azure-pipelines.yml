@@ -23,49 +23,49 @@ jobs:
   - bash: sudo apt-get update && sudo apt-get install -y libgsl-dev # script path or inline
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: download and update libgsl-dev #
-    failOnStderr: true #
+    failOnStderr: false #
     #env: # mapping of environment variables to add
 
   - bash: curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: dowload and extract globes library #
-    failOnStderr: true #
+    failOnStderr: false #
     #env: # mapping of environment variables to add
 
   - bash: ./configure --prefix=$(GLB_DIR)
     workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
     displayName: configure globes library #
-    failOnStderr: true #
+    failOnStderr: false #
     #env: # mapping of environment variables to add
 
   - bash: sudo make
     workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
     displayName: make globes library #
-    failOnStderr: true #
+    failOnStderr: false #
     #env: # mapping of environment variables to add
 
   - bash: sudo make install
     workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
     displayName: install globes library #
-    failOnStderr: true #
+    failOnStderr: false #
     #env: # mapping of environment variables to add
 
   - bash: sudo ldconfig
     workingDirectory: $(System.DefaultWorkingDirectory)/globes-3.2.17 #
     displayName: run ldconfig #
-    failOnStderr: true #
+    failOnStderr: false #
     #env: # mapping of environment variables to add
 
   - bash: export PATH=$(GLB_BIN):$PATH
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: prepend GLB_BIN to PATH #
-    failOnStderr: true #
+    failOnStderr: false #
     #env: # mapping of environment variables to add
 
   - bash: export LD_LIBRARY_PATH=$(GLB_BIN):$LD_LIBRARY_PATH
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: prepend GLB_BIN to PATH #
-    failOnStderr: true #
+    failOnStderr: false #
     #env: # mapping of environment variables to add
 
   - task: PublishPipelineArtifact@1 # string  # reference to a task and version, e.g. "VSBuild@1"
@@ -94,25 +94,25 @@ jobs:
   - bash: python -m pip install --upgrade pip setuptools wheel
     workingDirectory: $(System.DefaultWorkingDirectory)
     displayName: prepend GLB_BIN to PATH #
-    failOnStderr: true #
+    failOnStderr: false #
     #env:  # mapping of environment variables to add
 
   - bash: pip install cffi
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: pip cffi #
-    failOnStderr: true #
+    failOnStderr: false #
     #env:  # mapping of environment variables to add
 
   - bash: pip install cibuildwheel==0.11.1
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: pip cibuildwheel #
-    failOnStderr: true #
+    failOnStderr: false #
     #env:  # mapping of environment variables to add pip install cibuildwheel==0.11.1
 
   - bash: cibuildwheel --output-dir wheelhouse --platform linux
     workingDirectory: $(System.DefaultWorkingDirectory) #
     displayName: pip cibuildwheel #
-    failOnStderr: true #
+    failOnStderr: false #
     #env:  # mapping of environment variables to add pip install cibuildwheel==0.11.1
 
   - task: PublishBuildArtifacts@1
