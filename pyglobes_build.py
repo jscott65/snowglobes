@@ -24,7 +24,7 @@ INCLUDES = """
 #include <ctype.h>
 """
 
-globes = '#include "{GLB_INCLUDE}/globes.h"'.format(GLB_INCLUDE='/usr/globes/include/globes')
+globes = '#include "{GLB_INCLUDE}/globes.h"'.format(GLB_INCLUDE='/home/vsts/work/1/s/globes/include')
 
 DEFINES = """
     /* Constants */
