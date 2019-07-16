@@ -1,38 +1,40 @@
+jobs:
+- job: linux
+  pool:
+    vmImage: 'ubuntu-16.04'
 
-pool:
-  vmImage: 'ubuntu-16.04'
-strategy:
-  matrix:
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
-  maxParallel: 3
+  strategy:
+    matrix:
+      Python35:
+        python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+      Python37:
+        python.version: '3.7'
+    maxParallel: 3
+    
+  variables:
+    CIBW_SKIP: cp27 cp34
+    CIBW_BUILD_VERBOSITY: 3
+    CIBW_BEFORE_BUILD: |
+      yum install -y gsl-devel && pip install .
+      curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
+      cd globes-3.2.17
+      ./configure
+      make
+      make install
+      ldconfig
+      echo $PATH
+      globes-config --include
+      pip install cffi
 
-variables:
-  CIBW_SKIP: cp27 cp34
-  CIBW_BUILD_VERBOSITY: 3
-  CIBW_BEFORE_BUILD: |
-    yum install -y gsl-devel && pip install .
-    curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
-    cd globes-3.2.17
-    ./configure
-    make
-    make install
-    ldconfig
-    echo $PATH
-    globes-config --include
-    pip install cffi
+  steps:
 
-steps:
-
-- task: UsePythonVersion@0
-  displayName: set python version # string  # friendly name displayed in the UI
-  inputs:
-    versionSpec: '$(python.version)' #'3.x'
-    addToPath: true
+  - task: UsePythonVersion@0
+    displayName: set python version # string  # friendly name displayed in the UI
+    inputs:
+      versionSpec: '$(python.version)' #'3.x'
+      addToPath: true
 
 #- bash: sudo apt-get update && sudo apt-get install -y libgsl-dev
 #  workingDirectory: $(System.DefaultWorkingDirectory)
@@ -69,20 +71,20 @@ steps:
 #  displayName: includes
 #  failOnStderr: false
 
-- bash: python -m pip install --upgrade pip setuptools wheel
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: pip install/upgrade setuptools, wheel
-  failOnStderr: false
+  - bash: python -m pip install --upgrade pip setuptools wheel
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: pip install/upgrade setuptools, wheel
+    failOnStderr: false
 
 #- bash: pip install cffi
 #  workingDirectory: $(System.DefaultWorkingDirectory)
 #  displayName: pip cffi
 #  failOnStderr: false
 
-- bash: ls -la
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: ls
-  failOnStderr: false
+  - bash: ls -la
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: ls
+    failOnStderr: false
 
 #- bash: ls
 #  workingDirectory: /usr/local/include
@@ -94,26 +96,25 @@ steps:
 #  displayName: ls
 #  failOnStderr: false
 
-- bash: pip install cibuildwheel==0.11.1
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: pip cibuildwheel
-  failOnStderr: false
+  - bash: pip install cibuildwheel==0.11.1
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: pip cibuildwheel
+    failOnStderr: false
 
-- bash: cibuildwheel --platform linux --output-dir wheelhouse
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: run cibuildwheel with output ./wheelhouse
-  failOnStderr: false
+  - bash: cibuildwheel --platform linux --output-dir wheelhouse
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: run cibuildwheel with output ./wheelhouse
+    failOnStderr: false
 
-- bash: ls -la
-  workingDirectory: $(System.DefaultWorkingDirectory)
-  displayName: ls
-  failOnStderr: false
+  - bash: ls -la
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: ls
+    failOnStderr: false
 
-- bash: ls -la
-  workingDirectory: $(System.DefaultWorkingDirectory)/wheelhouse
-  displayName: ls
-  failOnStderr: false
+  - bash: ls -la
+    workingDirectory: $(System.DefaultWorkingDirectory)/wheelhouse
+    displayName: ls
+    failOnStderr: false
 
-
-- task: PublishBuildArtifacts@1
-  inputs: {pathtoPublish: 'wheelhouse'}
+  - task: PublishBuildArtifacts@1
+    inputs: {pathtoPublish: 'wheelhouse'}
