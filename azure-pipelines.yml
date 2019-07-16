@@ -164,7 +164,7 @@ jobs:
     displayName: pip cibuildwheel
     failOnStderr: false
 
-  - bash: cibuildwheel --platform linux --output-dir wheelhouse
+  - bash: cibuildwheel --platform macos --output-dir wheelhouse
     workingDirectory: $(System.DefaultWorkingDirectory)
     displayName: run cibuildwheel with output ./wheelhouse
     failOnStderr: false
