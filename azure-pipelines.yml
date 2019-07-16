@@ -1,17 +1,16 @@
 jobs:
 - job: linux
-  pool:
-    vmImage: 'ubuntu-16.04'
+  pool: {vmImage: 'Ubuntu-16.04'}
 
-  strategy:
-    matrix:
-      Python35:
-        python.version: '3.5'
-      Python36:
-        python.version: '3.6'
-      Python37:
-        python.version: '3.7'
-    maxParallel: 3
+#  strategy:
+#    matrix:
+#      Python35:
+#        python.version: '3.5'
+#      Python36:
+#        python.version: '3.6'
+#      Python37:
+#        python.version: '3.7'
+#    maxParallel: 3
 
   variables:
     CIBW_SKIP: cp27 cp34
@@ -32,9 +31,9 @@ jobs:
 
   - task: UsePythonVersion@0
     displayName: set python version
-    inputs:
-      versionSpec: '$(python.version)' #'3.x'
-      addToPath: true
+#    inputs:
+#      versionSpec: '$(python.version)' #'3.x'
+#      addToPath: true
 
 #- bash: sudo apt-get update && sudo apt-get install -y libgsl-dev
 #  workingDirectory: $(System.DefaultWorkingDirectory)
@@ -122,15 +121,15 @@ jobs:
 - job: mac
   pool: {vmImage: 'macOS-10.13'}
 
-  strategy:
-    matrix:
-      Python35:
-        python.version: '3.5'
-      Python36:
-        python.version: '3.6'
-      Python37:
-        python.version: '3.7'
-    maxParallel: 3
+#  strategy:
+#    matrix:
+#      Python35:
+#        python.version: '3.5'
+#      Python36:
+#        python.version: '3.6'
+#      Python37:
+#        python.version: '3.7'
+#    maxParallel: 3
 
   variables:
     CIBW_SKIP: cp27 cp34
@@ -151,9 +150,9 @@ jobs:
 
   - task: UsePythonVersion@0
     displayName: set python version
-    inputs:
-      versionSpec: '$(python.version)' #'3.x'
-      addToPath: true
+#    inputs:
+#      versionSpec: '$(python.version)' #'3.x'
+#      addToPath: true
 
   - bash: python -m pip install --upgrade pip setuptools wheel
     workingDirectory: $(System.DefaultWorkingDirectory)
