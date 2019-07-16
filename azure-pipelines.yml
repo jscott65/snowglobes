@@ -135,7 +135,7 @@ jobs:
     CIBW_SKIP: cp27 cp34
     CIBW_BUILD_VERBOSITY: 3
     CIBW_BEFORE_BUILD: |
-      yum install -y gsl-devel && pip install .
+      brew install gsl && pip install .
       curl https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz | tar xvz
       cd globes-3.2.17
       ./configure
