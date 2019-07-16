@@ -154,3 +154,31 @@ jobs:
     inputs:
       versionSpec: '$(python.version)' #'3.x'
       addToPath: true
+
+  - bash: python -m pip install --upgrade pip setuptools wheel
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: pip install/upgrade setuptools, wheel
+    failOnStderr: false
+
+  - bash: pip install cibuildwheel==0.11.1
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: pip cibuildwheel
+    failOnStderr: false
+
+  - bash: cibuildwheel --platform linux --output-dir wheelhouse
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: run cibuildwheel with output ./wheelhouse
+    failOnStderr: false
+
+  - bash: ls -la
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: ls
+    failOnStderr: false
+
+  - bash: ls -la
+    workingDirectory: $(System.DefaultWorkingDirectory)/wheelhouse
+    displayName: ls
+    failOnStderr: false
+
+  - task: PublishBuildArtifacts@1
+    inputs: {pathtoPublish: 'wheelhouse'}
