@@ -1,7 +1,7 @@
 import os
 
-from snowglobes import aedl
-from snowglobes import snowglobes
+from snowglobes.aedl import *
+from snowglobes.snowglobes import *
 
 package_dir = os.path.dirname(os.path.abspath(__file__))
 

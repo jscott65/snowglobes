@@ -10,6 +10,7 @@ from snowglobes.aedl import create_AEDL_file
 def main(fluxname, channame, expt_config, *weight):
 
     chan = Channel(channame)
+    
     det = Detector()
 
     t = create_AEDL_file(fluxname, chan, det, expt_config)
