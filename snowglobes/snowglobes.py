@@ -1,14 +1,13 @@
-import argparse
-
+#!/usr/bin/env python
 import os
 
 import numpy as np
 
-from snowglobes.globes import GLB
-
 from snowglobes.helper import get_abs_path
 
 from snowglobes.aedl import create_AEDL_file
+
+from snowglobes.supernova import supernova
 
 
 class Channel():

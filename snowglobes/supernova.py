@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 import os
+
 from pyglobes._pyglobes import ffi, lib
 
+from snowglobes.globes import GLB
+
+from snowglobes.helper import get_abs_path
 
 def supernova(fluxname, chan, expt_config):
 

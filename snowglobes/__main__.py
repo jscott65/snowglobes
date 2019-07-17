@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import argparse
 
 from .snowglobes import main
 
@@ -20,6 +21,3 @@ if __name__ == '__main__':
     weight = args.weight
 
     main(fluxname, channame, expt_config, weight)
-
-else:
-    print("supernova.py is being imported into another module, must create the AEDL file before running supernova()")

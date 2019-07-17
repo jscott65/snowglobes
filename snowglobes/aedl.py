@@ -27,7 +27,7 @@ class AEDL():
             print("Flux file name {} not found".format(fluxfilename))
         with open(self.flux) as f_in:
             flux_contents = f_in.read()
-            flux_contents1 = re.sub('supernova_flux.dat', fluxfilename, flux_contents)
+            flux_contents1 = re.sub('{flux}', fluxfilename, flux_contents)
         self.file_obj.write(flux_contents1)
 
     def SetSmearing(self, chan, expt_config):
