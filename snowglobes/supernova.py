@@ -1,64 +1,50 @@
 #!/usr/bin/env python
-
-import argparse
-
-
-from snowglobes.snowglobes import Channel, Detector, apply_weights, supernova
-from snowglobes.aedl import create_AEDL_file
+import os
+from pyglobes._pyglobes import ffi, lib
 
 
-def main(fluxname, channame, expt_config, *weight):
+def supernova(fluxname, chan, expt_config):
 
-    parser = argparse.ArgumentParser(
-        description='SNOwGLoBES: public software for computing interaction rates and distributions of observed quantities for supernova burst neutrinos in common detector materials.')
-    parser.add_argument('fluxname', type=str, help='Name of flux. \n (eg. livermore)')
-    parser.add_argument('channelname', type=str, help='Name of channel. \n (eg. argon)')
-    parser.add_argument('experimentname', type=str, help='Name of experiment. \n (eg. ar17kt)')
-    parser.add_argument('--weight', action='store_true', help='Apply weighting factor. \n')
+    glb = GLB()
 
-    # e.g. python supernova.py livermore argon ar17kt
-    args = parser.parse_args()
+    channel_file_name = chan.chan_file_name
 
-    fluxname = args.fluxname
-    channame = args.channelname
-    expt_config = args.experimentname
-    weight = args.weight
+    if os.path.exists(channel_file_name):
+        print("Channels from {}".format(channel_file_name))
+        print("Number of channels found: {}".format(len(chan.name)))
 
-
-    chan = Channel(channame)
-
-    det = Detector()
-
-    t = create_AEDL_file(fluxname, chan, det, expt_config)
-
-    s = supernova(fluxname, chan, expt_config)
-
-    if weight == True:
-        print("Applying channel weighting factors to output")
-        apply_weights("", fluxname, chan, expt_config)
-        apply_weights("_smeared", fluxname, chan, expt_config)
     else:
-        print("No weighting factors applied to output")
+        print("Cannot open channel file")
 
+    true_values = glb.AllocParams()
+    test_values = glb.AllocParams()
 
-if __name__ == '__main__':
+    theta12 = 0
+    theta13 = 0
+    theta23 = 0
+    deltacp = 0
+    sdm = 0
+    ldm = 0
 
-    parser = argparse.ArgumentParser(
-        description='SNOwGLoBES: public software for computing interaction rates and distributions of observed quantities for supernova burst neutrinos in common detector materials.')
-    parser.add_argument('fluxname', type=str, help='Name of flux. \n (eg. livermore)')
-    parser.add_argument('channelname', type=str, help='Name of channel. \n (eg. argon)')
-    parser.add_argument('experimentname', type=str, help='Name of experiment. \n (eg. ar17kt)')
-    parser.add_argument('--weight', action='store_true', help='Apply weighting factor. \n')
+    glb.DefineParams(true_values, theta12, theta13, theta23, deltacp, sdm, ldm)
+    glb.SetDensityParams(true_values, 1.0, lib.GLB_ALL)
+    glb.DefineParams(test_values, theta12, theta13, theta23, deltacp, sdm, ldm)
+    glb.SetDensityParams(test_values, 1.0, lib.GLB_ALL)
 
-    # e.g. python supernova.py livermore argon ar17kt
-    args = parser.parse_args()
+    glb.SetOscillationParams(true_values)
+    glb.SetRates()
 
-    fluxname = args.fluxname
-    channame = args.channelname
-    expt_config = args.experimentname
-    weight = args.weight
+    glb.PrintChannelRates(fluxname, chan, expt_config)
 
-    main(fluxname, channame, expt_config, weight)
+    bgfile = get_abs_path('backgrounds/bg_chan_{}.dat'.format(expt_config))
 
-else:
-    print("supernova.py is being imported into another module, must create the AEDL file before running supernova()")
+    if os.path.exists(bgfile):
+        bg_file = True
+        glb.PrintChannelRates(fluxname, chan, expt_config, bg_file)
+    else:
+        print("No background file")
+
+    glb.FreeParams(true_values)
+    glb.FreeParams(test_values)
+
+    return(0)

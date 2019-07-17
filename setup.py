@@ -37,10 +37,10 @@ setup(
     packages=find_packages(),
     #ext_package = 'pyglobes',
     # ADD ENTRY POINT SUPERNOVA:MOAIN
-    scripts=['snowglobes/supernova.py'],
+    scripts=['snowglobes/snowglobes.py'],
     entry_points={
         'console_scripts': [
-            'supernova = snowglobes.supernova:main'
+            'supernova = snowglobes.snowglobes:main'
         ],
     },
     include_package_data=True,

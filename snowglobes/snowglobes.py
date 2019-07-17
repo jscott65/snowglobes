@@ -1,11 +1,15 @@
+import argparse
+
 import os
 
 import numpy as np
-from pyglobes._pyglobes import ffi, lib
 
 from snowglobes.globes import GLB
 
 from snowglobes.helper import get_abs_path
+
+from snowglobes.aedl import create_AEDL_file
+
 
 
 class Channel():
@@ -46,53 +50,6 @@ class Detector():
         return(self.mass[self.get_index(expt_config)])
 
 
-def supernova(fluxname, chan, expt_config):
-
-    glb = GLB()
-
-    channel_file_name = chan.chan_file_name
-
-    if os.path.exists(channel_file_name):
-        print("Channels from {}".format(channel_file_name))
-        print("Number of channels found: {}".format(len(chan.name)))
-
-    else:
-        print("Cannot open channel file")
-
-    true_values = glb.AllocParams()
-    test_values = glb.AllocParams()
-
-    theta12 = 0
-    theta13 = 0
-    theta23 = 0
-    deltacp = 0
-    sdm = 0
-    ldm = 0
-
-    glb.DefineParams(true_values, theta12, theta13, theta23, deltacp, sdm, ldm)
-    glb.SetDensityParams(true_values, 1.0, lib.GLB_ALL)
-    glb.DefineParams(test_values, theta12, theta13, theta23, deltacp, sdm, ldm)
-    glb.SetDensityParams(test_values, 1.0, lib.GLB_ALL)
-
-    glb.SetOscillationParams(true_values)
-    glb.SetRates()
-
-    glb.PrintChannelRates(fluxname, chan, expt_config)
-
-    bgfile = get_abs_path('backgrounds/bg_chan_{}.dat'.format(expt_config))
-
-    if os.path.exists(bgfile):
-        bg_file = True
-        glb.PrintChannelRates(fluxname, chan, expt_config, bg_file)
-    else:
-        print("No background file")
-
-    glb.FreeParams(true_values)
-    glb.FreeParams(test_values)
-
-    return(0)
-
-
 def apply_weights(filename, fluxname, chan, expt_config):
     for i, chan_name in enumerate(chan.name):
         unweightedfilename = "out/{}_{}_{}_events{}_unweighted.dat".format(
@@ -103,3 +60,44 @@ def apply_weights(filename, fluxname, chan, expt_config):
         data[:, 1] *= chan.num[i]
         footer = "-----------------\nTotal:   {:f}".format(data[-1, 1])
         np.savetxt(weightedfilename, data[:][:-1], fmt='%f', footer=footer, comments='')
+
+
+def main(fluxname, channame, expt_config, *weight):
+
+    chan = Channel(channame)
+
+    det = Detector()
+
+    t = create_AEDL_file(fluxname, chan, det, expt_config)
+
+    s = supernova(fluxname, chan, expt_config)
+
+    if weight == True:
+        print("Applying channel weighting factors to output")
+        apply_weights("", fluxname, chan, expt_config)
+        apply_weights("_smeared", fluxname, chan, expt_config)
+    else:
+        print("No weighting factors applied to output")
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(
+        description='SNOwGLoBES: public software for computing interaction rates and distributions of observed quantities for supernova burst neutrinos in common detector materials.')
+    parser.add_argument('fluxname', type=str, help='Name of flux. \n (eg. livermore)')
+    parser.add_argument('channelname', type=str, help='Name of channel. \n (eg. argon)')
+    parser.add_argument('experimentname', type=str, help='Name of experiment. \n (eg. ar17kt)')
+    parser.add_argument('--weight', action='store_true', help='Apply weighting factor. \n')
+
+    # e.g. python supernova.py livermore argon ar17kt
+    args = parser.parse_args()
+
+    fluxname = args.fluxname
+    channame = args.channelname
+    expt_config = args.experimentname
+    weight = args.weight
+
+    main(fluxname, channame, expt_config, weight)
+
+else:
+    print("supernova.py is being imported into another module, must create the AEDL file before running supernova()")
