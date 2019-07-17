@@ -11,7 +11,6 @@ from snowglobes.helper import get_abs_path
 from snowglobes.aedl import create_AEDL_file
 
 
-
 class Channel():
 
     __slots__ = ('channel', 'chan_file_name', 'name', 'num', 'cp', 'flav', 'factor')
