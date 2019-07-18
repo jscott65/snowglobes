@@ -1,8 +1,7 @@
 #!/bin/python3
 
 import numpy as np
-import math
-import pandas as pd
+
 
 def oscillate(flux, th12, osc, path):
     s2th12   = pow((np.sin(th12)),2)
