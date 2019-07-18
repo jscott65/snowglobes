@@ -3,7 +3,7 @@ import numpy as np
 
 
 #from snowglobes import aedl
-#from snowglobes import snowglobes
+from snowglobes import snowglobes
 
 package_dir = os.path.dirname(os.path.abspath(__file__))
 

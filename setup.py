@@ -17,10 +17,9 @@ here = path.abspath(path.dirname(__file__))
 #os.environ["GLB_DIR"]= GLB_DIR
 #os.environ["SNOWGLOBES"] = SNOWGLOBES
 
-
 setup(
     name='SNOwGLoBES',
-    version='2.0.18',
+    version='2.0.19',
 
     author='Justin Scott',
     author_email='jscott65@vols.utk.edu',
@@ -37,7 +36,7 @@ setup(
     packages=find_packages(),
     #ext_package = 'pyglobes',
     # ADD ENTRY POINT SUPERNOVA:MAIN
-    scripts=['snowglobes/snowglobes.py'],
+    #scripts=['snowglobes/snowglobes.py'],
     entry_points={
         'console_scripts': [
             'supernova = snowglobes.snowglobes:main'

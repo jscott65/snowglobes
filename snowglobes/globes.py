@@ -1,3 +1,5 @@
+import os
+
 from pyglobes._pyglobes import ffi, lib
 from snowglobes.helper import get_abs_path
 
@@ -38,6 +40,9 @@ class GLB():
                 outfile = get_abs_path(
                     "out/{}_{}_{}_events_unweighted.dat".format(fluxname, chan_name, expt_config))
             print(i, outfile)
+            #Add new directory if it doesnt exist
+            os.makedirs(os.path.dirname(outfile), exist_ok=True)
+
             with open(outfile, 'w+') as f_out:
                 ret = self.ShowChannelRates(
                     f_out, 0, chan.num[i], lib.GLB_PRE, lib.GLB_WO_EFF, lib.GLB_WO_BG)
