@@ -33,14 +33,14 @@ setup(
     classifiers=["Programming Language :: Python :: 3"],
 
     #packages = ['supernova'],
-    #py_modules = ['aedl', 'globes', 'snowglobes', 'pyglobes_build'],
+    py_modules = ['aedl', 'globes', 'snowglobes', 'helper', 'supernova'],
     packages=find_packages(),
     #ext_package = 'pyglobes',
     # ADD ENTRY POINT SUPERNOVA:MAIN
     scripts=['snowglobes/snowglobes.py'],
     entry_points={
         'console_scripts': [
-            'supernova = snowglobes.snowglobes:snowglobes'
+            'supernova = snowglobes.snowglobes:main'
         ],
     },
     include_package_data=True,
