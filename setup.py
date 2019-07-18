@@ -36,13 +36,13 @@ setup(
     #py_modules = ['aedl', 'globes', 'snowglobes', 'pyglobes_build'],
     packages=find_packages(),
     #ext_package = 'pyglobes',
-    # ADD ENTRY POINT SUPERNOVA:MOAIN
-    #scripts=['snowglobes/snowglobes.py'],
-    #entry_points={
-    #    'console_scripts': [
-    #        'supernova = snowglobes.snowglobes:main'
-    #    ],
-    #},
+    # ADD ENTRY POINT SUPERNOVA:MAIN
+    scripts=['snowglobes/snowglobes.py'],
+    entry_points={
+        'console_scripts': [
+            'supernova = snowglobes.snowglobes:snowglobes'
+        ],
+    },
     include_package_data=True,
 
     setup_requires=["cffi>=1.0.0"],

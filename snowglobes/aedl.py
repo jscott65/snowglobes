@@ -124,6 +124,11 @@ class AEDL():
         """
         self.file_obj.write(rule)
 
+#    def SetParam(self, infile, params):
+#        for i, param in enumerate(params):
+#            with open(infile, mode='r') as f_in:
+#                 self.file_obj.write(f_in.read().format(**param))
+#
     def Close(self):
         self.file_obj.close()
 
@@ -145,3 +150,6 @@ def create_AEDL_file(fluxname, chan, det, expt_config):
     aedl.MakeBackgroundChannel(expt_config)
     aedl.Postamble()
     aedl.Close()
+
+if __name__ == '__main__':
+    print("add aedl file test")
