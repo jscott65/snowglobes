@@ -6,3 +6,10 @@
 
 # Include the data files
 graft snowglobes
+
+prune snowglobes/fluxes/chimera*
+
+recursive-exclude snowglobes/out/ *.dat
+
+global-exclude *_normal*
+global-exclude *_inverted*
