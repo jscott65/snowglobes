@@ -19,7 +19,7 @@ if __name__ == '__main__':
     parser.add_argument('--osc', type=int, nargs='?', default=None, choices=[1, -1], const=1, help='Oscillate fluxes.\n')
 
 
-    # e.g. python supernova.py livermore argon ar17kt
+    # e.g. python supernova.py livermore argon ar17kt (optional: --weight --td --osc 1)
     args = parser.parse_args()
 
     fluxname = args.fluxname
@@ -31,34 +31,21 @@ if __name__ == '__main__':
 
     path = get_abs_path('/fluxes/' + fluxname)
 
-    if osc and td:
-        files = [os.path.splitext(filename)[0] for filename in os.listdir(path)]
-        files.sort()
-        for flux in files:
-            tdfluxpath = get_abs_path('fluxes/' +fluxname + '/' + flux)
-            data = np.genfromtxt(tdfluxpath+'.dat', dtype=None, encoding=None)
-            th12 = 0.588366
-            oscillate(data, th12, osc, tdfluxpath+'.dat')
-        print('both')
-
-    elif osc: #osc=1 for normal hierachy and osc=-1 for inverted
-        print('!!osc!!')
-        print(osc)
-        #fluxname = fluxname strip the .dat and add inverted or normal to end
-        flux = np.genfromtxt(path+'.dat', dtype=None, encoding=None)
-        th12 = 0.588366
-        oscillate(flux, th12, osc, path+'.dat')
-        if osc==1:
+    if osc:
+        oscillate(fluxname, osc, td)
+        if osc == -1:
+            fluxname = fluxname + '_inverted'
+        elif osc == 1:
             fluxname = fluxname + '_normal'
-        elif osc==-1:
-           fluxname = fluxname + '_inverted'
-
 
     if td:
-
         files = [os.path.splitext(filename)[0] for filename in os.listdir(path)]
         files.sort()
         for flux in files:
+            if osc==-1:
+                flux = flux + '_inverted'
+            elif osc==1:
+                flux = flux + '_normal'
             tdfluxname = fluxname + '/' + flux
             main(tdfluxname, channame, expt_config, weight)
     else:

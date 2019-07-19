@@ -32,7 +32,7 @@ setup(
     classifiers=["Programming Language :: Python :: 3"],
 
     #packages = ['supernova'],
-    py_modules = ['aedl', 'globes', 'snowglobes', 'helper', 'supernova'],
+    #py_modules = ['aedl', 'globes', 'snowglobes', 'helper', 'supernova'],
     packages=find_packages(),
     #ext_package = 'pyglobes',
     # ADD ENTRY POINT SUPERNOVA:MAIN

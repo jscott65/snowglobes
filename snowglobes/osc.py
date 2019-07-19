@@ -1,11 +1,19 @@
 #!/bin/python3
 
 import numpy as np
+import os
 
+#from snowglobes.helper import get_abs_path
 
-def oscillate(flux, th12, osc, path):
-    s2th12   = pow((np.sin(th12)),2)
-    c2th12   = 1-s2th12
+#os.makedirs(os.path.dirname(outfile), exist_ok=True)
+here = os.path.dirname(os.path.abspath(__file__))
+#print(here)
+
+def msw(flux, osc):
+
+    th12 = 0.588366
+    s2th12 = pow((np.sin(th12)),2)
+    c2th12 = 1-s2th12
 
     if osc==1:
         nue = flux[:,3]
@@ -16,8 +24,6 @@ def oscillate(flux, th12, osc, path):
         numubar = ((1-c2th12)*flux[:,2]+(1+c2th12)*flux[:,4])/2
         nutaubar = ((1-c2th12)*flux[:,2]+(1+c2th12)*flux[:,4])/2
 
-        path = path[1:-4] + '_normal.dat'
-
     elif osc==-1:
         nue = s2th12*flux[:,1]+c2th12*flux[:,3]
         numu = ((1-s2th12)*flux[:,1]+(1+s2th12)*flux[:,3])/2
@@ -27,11 +33,40 @@ def oscillate(flux, th12, osc, path):
         numubar = (flux[:,2]+flux[:,4])/2
         nutaubar = (flux[:,2]+flux[:,4])/2
 
-        path = path[1:-4] + '_inverted.dat'
-
     out = np.array([nue, numu, nutau, nuebar, numubar, nutaubar])
     flux[:,1::] = out.T
-    #with open('/'+path, mode='w+') as f_out:
-    #    f_out.write(flux)
-    np.savetxt('/' + path, flux, fmt='%16.6e', delimiter='\t')
-    #return(out)
+
+    return(flux)
+
+
+def oscillate(fluxname, osc, td):
+    if td:
+        path = here + '/fluxes/' + fluxname
+        files = [os.path.splitext(filename)[0] for filename in os.listdir(path)]
+        files.sort()
+
+        for fluxfile in files:
+            fluxfilepath = here + '/fluxes/' + fluxname + '/' + fluxfile + '.dat'
+            flux = np.genfromtxt(fluxfilepath, dtype=None, encoding=None)
+            flux = msw(flux, osc)
+            if osc==1:
+                outfilepath = here + '/fluxes/' + fluxname + '_normal/' + fluxfile + '_normal.dat'
+            elif osc==-1:
+                outfilepath = here + '/fluxes/' + fluxname + '_inverted/' + fluxfile + '_inverted.dat'
+            else:
+                print('Error: Invalid value for osc.')
+                print('Must be either -1 or 1 for inverted and normal hierachies, repsectively.')
+
+            os.makedirs(os.path.dirname(outfilepath), exist_ok=True)
+            np.savetxt(outfilepath, flux, fmt='%16.6e', delimiter='\t')
+
+    else:
+        fluxfilepath = here + '/fluxes/' + fluxname + '.dat'
+        flux = np.genfromtxt(fluxfilepath, dtype=None, encoding=None)
+        flux = msw(flux, osc)
+        if osc==1:
+            outfilepath = here + '/fluxes/' + fluxname + '_normal.dat'
+        elif osc==-1:
+            outfilepath = here + '/fluxes/' + fluxname + '_inverted.dat'
+        os.makedirs(os.path.dirname(outfilepath), exist_ok=True)
+        np.savetxt(outfilepath, flux, fmt='%16.6e', delimiter='\t')
