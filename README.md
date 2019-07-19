@@ -4,12 +4,14 @@ Infrastructure for the Analysis of Neutrino Signatures in Core-Collapse Supernov
 
 ## Getting Started
 
-The snowglobes package can be downloaded directly from pip. However, there are several prerequisites.
+The snowglobes package can be downloaded directly from pip.
 
 ## Prerequisites
 
+The GLoBES library is required for snowglobes. This is taken care of by including the globes binary into the wheel binary files. Thus, snowglobes can be installed from Pip and immediately ran with no need for compilation.
+
 ### GLoBES
-Currently, the GLoBES library must be installed, made, and added to PATH prior to any attempt to install snowglobes.
+Installing from the source distribution requires that the GLoBES library be installed, made, and added to PATH prior to any attempt to install snowglobes.
 
 
 [GLoBES: General Long Baseline Experiment Simulator](https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.2.17.tar.gz) - Download the source files here
@@ -47,12 +49,17 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:GLB_DIR
 
 ### Other dependencies
 * cffi
+* numpy
 
-Pip will take care of this when it installs the package.
+Include these in an anaconda env or a virtenv to pip install into.
 
 ## Installing
 
-Now that we have the globes library installed. We can install the snowglobes package.
+Typically, there will be a built wheel for your specific system and python version.
+
+Before installing snowglobes via pip, create a virtual environment through anaconda or virtenv. Make sure to include numpy and cffi modules. (You may be able to download without this step, but it typically results in errors.)
+
+We install it as follows:
 
 ```
 pip install snowglobes
@@ -63,25 +70,26 @@ or, if you don't have root access
 pip install --user snowglobes
 ```
 
-After installation, verify that the directory the package is saved in is on the PATH and PYTHON_PATH by
-
-
-```
-echo $PATH
-echo $PYTHONPATH
-```
-
-If it is not on your paths, add it as so
-
-```
-export PYTHONPATH=$PYTHONPATH:/path/to/snowglobes/
-export PATH=$PATH:/path/to/snowglobes/
-```
-
 ## Running the experiment
 
 There are three different modes of using the snowglobes package. The first method is the simplest and the main mode of usage.
 
+To run an experiment with snowglobes,
+
+```
+python -m snowglobes <fluxname> <channel> <expt_config>
+```
+
+There are optional arguments that can be added:
+
+```
+python -m snowglobes <fluxname> <channel> <expt_config> --td --weight --osc
+```
+The '--td' command tells snowglobes it's looking for time-dependent fluence files.
+The '--weight' command applies weighting factors.
+The '--osc' command applies msw oscillations to the fluence files factors. Default is normal hierarchy. (--osc 1 : normal, --osc -1 : inverted)
+
+PAST HERE DOESNT WORK ATM.
 During installation, the script supernova.py is saved to the python scripts directory. It can be executed via the command line from any directory.
 
 ```
