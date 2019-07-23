@@ -19,7 +19,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='SNOwGLoBES',
-    version='2.0.21',
+    version='2.0.22',
 
     author='Justin Scott',
     author_email='jscott65@vols.utk.edu',
