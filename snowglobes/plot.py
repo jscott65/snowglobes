@@ -87,8 +87,12 @@ def plotflux(fluxname, td=False, output_name=False, interactive=False):
     ax.legend(labels)
 
     ax.set(xlabel='Neutrino Energy (MeV)', ylabel=r'Fluence (neutrinos per 0.2 MeV per $cm^2$)', title='Fluence vs Energy')
-    ax.grid()
 
+    caption = f'{fluxname} fluence.'
+
+    plt.figtext(.02, .02, caption, size='x-small')
+
+    ax.grid()
 
 
     #plt.style.use('seaborn-bright')
