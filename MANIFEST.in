@@ -8,6 +8,8 @@
 graft snowglobes
 
 prune snowglobes/fluxes/chimera*
+prune snowglobes/fluxes/spectob*
+prune snowglobes/fluxes/*timesteps*
 
 recursive-exclude snowglobes/out/ *.dat
 
