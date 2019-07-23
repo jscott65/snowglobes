@@ -36,6 +36,7 @@ setup(
     packages=find_packages(),
     #ext_package = 'pyglobes',
     # ADD ENTRY POINT SUPERNOVA:MAIN
+    zip_safe=False,
     scripts=['snowglobes/snowglobes.py'],
     entry_points={
         'console_scripts': [
