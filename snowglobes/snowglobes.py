@@ -9,6 +9,9 @@ from snowglobes.aedl import create_AEDL_file
 
 from snowglobes.supernova import supernova
 
+import subprocess
+
+here = os.path.dirname(os.path.abspath(__file__))
 
 class Channel():
 
@@ -23,6 +26,7 @@ class Channel():
         self.cp = [i[2] for i in data]
         self.flav = [i[3] for i in data]
         self.factor = [i[4] for i in data]
+
 
 
 class Detector():
@@ -45,7 +49,7 @@ class Detector():
         return(self.config.index(expt_config))
 
     def get_target_mass(self, expt_config):
-        return(self.mass[self.get_index(expt_config)])
+        return(self.mass[self.get_index(expt_config)]*self.norm[self.get_index(expt_config)])
 
 
 def apply_weights(filename, fluxname, chan, expt_config):
@@ -55,7 +59,7 @@ def apply_weights(filename, fluxname, chan, expt_config):
         weightedfilename = get_abs_path("out/{}_{}_{}_events{}.dat".format(
             fluxname, chan_name, expt_config, filename))
         data = np.genfromtxt(unweightedfilename, comments="--", dtype=float, encoding=None)
-        data[:, 1] *= chan.num[i]
+        data[:, 1] *= chan.factor[i]
         footer = "-----------------\nTotal:   {:f}".format(data[-1, 1])
         np.savetxt(weightedfilename, data[:][:-1], fmt='%f', footer=footer, comments='')
 
@@ -68,33 +72,19 @@ def main(fluxname, channame, expt_config, weight=False):
 
     t = create_AEDL_file(fluxname, chan, det, expt_config)
 
-    s = supernova(fluxname, chan, expt_config)
+    #exename = here + "/bin/supernova"
 
+    #chanfilename = here + "/channels/channels_" +channame+ ".dat"
+    #print('subprocess')
+    #subprocess.run([exename, fluxname, chanfilename, expt_config], input=None, timeout=None, check=False)
+    s = supernova(fluxname, chan, expt_config)
+    #print('postsub')
     if weight:
         print("Applying channel weighting factors to output")
         apply_weights("", fluxname, chan, expt_config)
         apply_weights("_smeared", fluxname, chan, expt_config)
     else:
         print("No weighting factors applied to output")
-
-def snowglobes(fluxname, channame, expt_config, *weight):
-
-        parser = argparse.ArgumentParser(
-            description='SNOwGLoBES: public software for computing interaction rates and distributions of observed quantities for supernova burst neutrinos in common detector materials.')
-        parser.add_argument('fluxname', type=str, help='Name of flux. \n (eg. livermore)')
-        parser.add_argument('channelname', type=str, help='Name of channel. \n (eg. argon)')
-        parser.add_argument('experimentname', type=str, help='Name of experiment. \n (eg. ar17kt)')
-        parser.add_argument('--weight', action='store_true', help='Apply weighting factor. \n')
-
-        # e.g. python supernova.py livermore argon ar17kt
-        args = parser.parse_args()
-
-        fluxname = args.fluxname
-        channame = args.channelname
-        expt_config = args.experimentname
-        weight = args.weight
-
-        main(fluxname, channame, expt_config, weight)
 
 
 if __name__ == '__main__':
@@ -115,6 +105,3 @@ if __name__ == '__main__':
     weight = args.weight
 
     main(fluxname, channame, expt_config, weight)
-
-else:
-    print("supernova.py is being imported into another module, must create the AEDL file before running supernova()")
