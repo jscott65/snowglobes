@@ -58,15 +58,15 @@ def oscillate(fluxname, osc, td):
                 print('Must be either -1 or 1 for inverted and normal hierachies, repsectively.')
 
             os.makedirs(os.path.dirname(outfilepath), exist_ok=True)
-            np.savetxt(outfilepath, flux, fmt='%16.6e', delimiter='\t')
+            np.savetxt(outfilepath, flux, fmt=' '.join(['%1.4f'] + ['%16.6e']*6), delimiter='\t')
 
     else:
         fluxfilepath = here + '/fluxes/' + fluxname + '.dat'
-        flux = np.genfromtxt(fluxfilepath, dtype=None, encoding=None)
+        flux = np.genfromtxt(fluxfilepath, dtype=None, encoding=None) #try-except error?? id td flux but no --td flag
         flux = msw(flux, osc)
         if osc==1:
             outfilepath = here + '/fluxes/' + fluxname + '_normal.dat'
         elif osc==-1:
             outfilepath = here + '/fluxes/' + fluxname + '_inverted.dat'
         os.makedirs(os.path.dirname(outfilepath), exist_ok=True)
-        np.savetxt(outfilepath, flux, fmt='%16.6e', delimiter='\t')
+        np.savetxt(outfilepath, flux, fmt=' '.join(['%1.4f'] + ['%16.6e']*6), delimiter='\t')
