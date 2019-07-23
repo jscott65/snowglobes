@@ -1,4 +1,4 @@
-#!/usr/bin
+#!/usr/bin/python
 import os
 
 import numpy as np
@@ -72,12 +72,12 @@ def main(fluxname, channame, expt_config, weight=False):
 
     t = create_AEDL_file(fluxname, chan, det, expt_config)
 
-    #exename = here + "/bin/supernova"
+    s = supernova(fluxname, chan, expt_config)
 
+    #exename = here + "/bin/supernova"
     #chanfilename = here + "/channels/channels_" +channame+ ".dat"
     #print('subprocess')
     #subprocess.run([exename, fluxname, chanfilename, expt_config], input=None, timeout=None, check=False)
-    s = supernova(fluxname, chan, expt_config)
     #print('postsub')
     if weight:
         print("Applying channel weighting factors to output")
