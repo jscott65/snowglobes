@@ -3,11 +3,11 @@ import argparse
 import os
 import numpy as np
 
-from .snowglobes import main
+from .snowglobes import main, Channel
 from .helper import get_abs_path
 from .osc import oscillate
 from .interp import interpolate
-from .plot import plotflux
+from .plot import plotflux, plot_rate_vs_time
 
 here = os.path.dirname(os.path.abspath(__file__))
 
@@ -25,6 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--exit', action='store_true', help='Flag to exit after interpolation or oscillation of fluxes.\n')
     parser.add_argument('--clean', action='store_true', help='Flag to remove oscillated and interpolated fluence files.\n')
     parser.add_argument('--plot_flux', action='store_true', help='Plot fluence files.\n')
+    parser.add_argument('--plot_rates', action='store_true', help='Plot rate vs times.\n')
 
 
     # e.g. python supernova.py livermore argon ar17kt (optional: --weight --td --osc 1)
@@ -40,6 +41,7 @@ if __name__ == '__main__':
     exit = args.exit
     clean = args.clean
     plot_flux = args.plot_flux
+    plot_rates = args.plot_rates
 
 
     path = get_abs_path('/fluxes/' + fluxname)
@@ -47,6 +49,14 @@ if __name__ == '__main__':
     if plot_flux:
 
         plotflux(fluxname, td)
+
+        raise SystemExit
+
+    if plot_rates:
+
+        chan = Channel(channame)
+
+        plot_rate_vs_time(fluxname, chan.name, expt_config, cumulative=True, log=False, interactive=False)
 
         raise SystemExit
 
