@@ -13,6 +13,7 @@ import subprocess
 
 here = os.path.dirname(os.path.abspath(__file__))
 
+
 class Channel():
 
     __slots__ = ('channel', 'chan_file_name', 'name', 'num', 'cp', 'flav', 'factor')
@@ -26,7 +27,6 @@ class Channel():
         self.cp = [i[2] for i in data]
         self.flav = [i[3] for i in data]
         self.factor = [i[4] for i in data]
-
 
 
 class Detector():
@@ -61,7 +61,8 @@ def apply_weights(filename, fluxname, chan, expt_config):
         data = np.genfromtxt(unweightedfilename, comments="--", dtype=float, encoding=None)
         data[:, 1] *= chan.factor[i]
         footer = "-------------------------\nTotal:          {:f}".format(data[-1, 1])
-        np.savetxt(weightedfilename, data[:][:-1], fmt=['%1.6f'] + ['%16.6e'], footer=footer, comments='')
+        np.savetxt(weightedfilename, data[:][:-1], fmt=['%1.6f'] +
+                   ['%16.6e'], footer=footer, comments='')
 
 
 def main(fluxname, channame, expt_config, weight=False):
@@ -76,9 +77,9 @@ def main(fluxname, channame, expt_config, weight=False):
 
     #exename = here + "/bin/supernova"
     #chanfilename = here + "/channels/channels_" +channame+ ".dat"
-    #print('subprocess')
+    # print('subprocess')
     #subprocess.run([exename, fluxname, chanfilename, expt_config], input=None, timeout=None, check=False)
-    #print('postsub')
+    # print('postsub')
     if weight:
         print("Applying channel weighting factors to output")
         apply_weights("", fluxname, chan, expt_config)

@@ -7,6 +7,7 @@ from snowglobes.globes import GLB
 
 from snowglobes.helper import get_abs_path
 
+
 def supernova(fluxname, chan, expt_config):
 
     glb = GLB()

@@ -20,13 +20,16 @@ if __name__ == '__main__':
     parser.add_argument('experimentname', type=str, help='Name of experiment. \n (eg. ar17kt)')
     parser.add_argument('--weight', action='store_true', help='Apply weighting factor. \n')
     parser.add_argument('--td', action='store_true', help='Use time-dependent fluxes.\n')
-    parser.add_argument('--osc', type=int, nargs='?', default=None, choices=[1, -1], const=1, help='Oscillate fluxes. Default is normal hierarchy (1), but you can specify with ±1. (eg. --osc -1)\n')
-    parser.add_argument('--interp', metavar='PATH', type=str, help='Interpolate time-dependent fluxes. Pass it the path to raw files. (eg. --interp "/path/to/raw/flux/files/")\n')
-    parser.add_argument('--exit', action='store_true', help='Flag to exit after interpolation or oscillation of fluxes.\n')
-    parser.add_argument('--clean', action='store_true', help='Flag to remove oscillated and interpolated fluence files.\n')
+    parser.add_argument('--osc', type=int, nargs='?', default=None, choices=[1, -1],
+                        const=1, help='Oscillate fluxes. Normal:1, Inverted:-1 Default is NH. (eg. --osc -1)\n')
+    parser.add_argument('--interp', metavar='PATH', type=str,
+                        help='Interpolate time-dependent fluxes. Pass it the path to raw files. (eg. --interp "/path/to/raw/flux/files/")\n')
+    parser.add_argument('--exit', action='store_true',
+                        help='Flag to exit after interpolation or oscillation of fluxes.\n')
+    parser.add_argument('--clean', action='store_true',
+                        help='Flag to remove oscillated and interpolated fluence files.\n')
     parser.add_argument('--plot_flux', action='store_true', help='Plot fluence files.\n')
     parser.add_argument('--plot_rates', action='store_true', help='Plot rate vs times.\n')
-
 
     # e.g. python supernova.py livermore argon ar17kt (optional: --weight --td --osc 1)
     args = parser.parse_args()
@@ -43,7 +46,6 @@ if __name__ == '__main__':
     plot_flux = args.plot_flux
     plot_rates = args.plot_rates
 
-
     path = get_abs_path('/fluxes/' + fluxname)
 
     if plot_flux:
@@ -56,12 +58,13 @@ if __name__ == '__main__':
 
         chan = Channel(channame)
 
-        plot_rate_vs_time(fluxname, chan.name, expt_config, cumulative=True, log=False, interactive=False)
+        plot_rate_vs_time(fluxname, chan.name, expt_config,
+                          cumulative=False, log=False, interactive=False)
 
         raise SystemExit
 
     if clean:
-        #implement some logic to delete all fluxes that are install with snowglobes.
+        # implement some logic to delete all fluxes that are install with snowglobes.
         files = os.listdir(here + '/out')
         for file in files:
             if file.endswith('.dat'):
@@ -98,9 +101,9 @@ if __name__ == '__main__':
         files = [os.path.splitext(filename)[0] for filename in os.listdir(path)]
         files.sort()
         for flux in files:
-            if osc==-1:
+            if osc == -1:
                 flux = flux + '_inverted'
-            elif osc==1:
+            elif osc == 1:
                 flux = flux + '_normal'
             tdfluxname = fluxname + '/' + flux
             main(tdfluxname, channame, expt_config, weight)

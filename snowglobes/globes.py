@@ -40,7 +40,7 @@ class GLB():
                 outfile = get_abs_path(
                     "out/{}_{}_{}_events_unweighted.dat".format(fluxname, chan_name, expt_config))
             print(i, outfile)
-            #Add new directory if it doesnt exist
+            # Add new directory if it doesnt exist
             os.makedirs(os.path.dirname(outfile), exist_ok=True)
 
             with open(outfile, 'w+') as f_out:
