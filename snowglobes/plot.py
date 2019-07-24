@@ -126,6 +126,8 @@ def plot_rate_vs_time(fluxname, channels, expt_config, cumulative=False, log=Fal
 
     path = here + '/fluxes/' + fluxname
 
+    print(f'Plotting {path}')
+
     files = [os.path.splitext(filename)[0] for filename in os.listdir(path)]
     files.sort()
 
@@ -151,7 +153,7 @@ def plot_rate_vs_time(fluxname, channels, expt_config, cumulative=False, log=Fal
 
     df.insert(loc=0, column='pb_time', value=pb_time.tolist())
 
-    print(df)
+    #print(df)
 
     ax = plt.gca()
     plt.style.use('ggplot')
@@ -160,7 +162,7 @@ def plot_rate_vs_time(fluxname, channels, expt_config, cumulative=False, log=Fal
 
         subplot = df.plot(kind='line',x='pb_time',y=chan,ax=ax)
 
-    ax.legend(channels, loc='center right')
+    ax.legend(channels, loc='upper right')
 
     ax.set(xlabel='Post Bounce Time (s)', ylabel='Total Events Detected', title='Events vs Time')
 
