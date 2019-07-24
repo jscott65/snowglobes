@@ -35,20 +35,27 @@ def interpolate(fluxname, path):
     #Read in timesteps
     overall_time, pb_time = get_timesteps(fluxname, path, copy=True)
 
+    #10 kpc in cm
+    R = 3.086*10**22
+    #distance modulus
+    factor = 1/(4*np.pi*pow(R,2))
+
+
     for i, flux in enumerate(files):
         filename = flux + '.dat'
-        fluxfilepath = path + '/' + filename
-        data = np.genfromtxt(fluxfilepath, skip_header=12, dtype=None, encoding=None)
+        fluxfilepath = path + filename
+        outfilepath = here + '/fluxes/' + fluxname + '/' + filename
 
-        energy, nue, nuebar, nux, nuxbar = data.T
+        print(f'Interpolating {filename}')
+        print(f'\tinput: {fluxfilepath}')
+        print(f'\toutput: {outfilepath}')
+
+        data = np.genfromtxt(fluxfilepath, skip_header=12, max_rows=20, dtype=None, encoding=None)
+
+        energy, nue, nuebar, nux, nuxbar = np.abs(data.T)
 
         #Convert energy to GeV
         energy *= 0.001
-
-        #10 kpc in cm
-        R = 3.086*10**22
-        #distance modulus
-        factor = 1/(4*np.pi*pow(R,2))
 
         bins, nue_fluence, nuebar_fluence, nux_fluence, nuxbar_fluence = np.zeros([501,5], dtype=float).T
 
@@ -70,14 +77,14 @@ def interpolate(fluxname, path):
             while f<501:
                 if bins[f] <= energy[p+1]:
                     alpha = np.abs(1/(1+(energy[p+1]-bins[f])/(bins[f]-energy[p])))
-                    nue_fluence[f] = np.exp(alpha * np.log(nue[p+1] + (1-alpha) * np.log(nue[p])))
-                    nuebar_fluence[f] = np.exp(alpha * np.log(nuebar[p+1] + (1-alpha) * np.log(nuebar[p])))
-                    nux_fluence[f] = np.exp(alpha * np.log(nux[p+1] + (1-alpha) * np.log(nux[p])))
-                    nuxbar_fluence[f] = np.exp(alpha * np.log(nuxbar[p+1] + (1-alpha) * np.log(nuxbar[p])))
+                    nue_fluence[f] = np.exp(alpha * np.log(nue[p+1]) + (1-alpha) * np.log(nue[p]))
+                    nuebar_fluence[f] = np.exp(alpha * np.log(nuebar[p+1]) + (1-alpha) * np.log(nuebar[p]))
+                    nux_fluence[f] = np.exp(alpha * np.log(nux[p+1]) + (1-alpha) * np.log(nux[p]))
+                    nuxbar_fluence[f] = np.exp(alpha * np.log(nuxbar[p+1]) + (1-alpha) * np.log(nuxbar[p]))
                     f += 1
-                elif bins[f] >= energy[p+1]:
+                elif bins[f] > energy[p+1]:
                     p += 1
-
+                #print(f)
         #Convert the fluxes into fluences by multiplying by dt
         if i==0 or i==1:
             nue_fluence = nue_fluence * factor * (pb_time[1] - pb_time[0])
@@ -91,8 +98,8 @@ def interpolate(fluxname, path):
             nuxbar_fluence = nuxbar_fluence * factor * (pb_time[i] - pb_time[i-1])
 
         #Prepare data for output
-        outfilepath = here + '/fluxes/' + fluxname + '/' + filename
-        output = np.array([bins, nue_fluence, nuebar_fluence, nux_fluence, nux_fluence, nuxbar_fluence, nuxbar_fluence]).T
+
+        output = np.array([bins, nue_fluence, nux_fluence, nux_fluence, nuebar_fluence, nuxbar_fluence, nuxbar_fluence]).T
 
         os.makedirs(os.path.dirname(outfilepath), exist_ok=True)
         np.savetxt(outfilepath, output, fmt=' '.join(['%1.4f'] + ['%16.6e']*6), delimiter='\t')
