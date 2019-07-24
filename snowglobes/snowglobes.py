@@ -60,8 +60,8 @@ def apply_weights(filename, fluxname, chan, expt_config):
             fluxname, chan_name, expt_config, filename))
         data = np.genfromtxt(unweightedfilename, comments="--", dtype=float, encoding=None)
         data[:, 1] *= chan.factor[i]
-        footer = "-----------------\nTotal:   {:f}".format(data[-1, 1])
-        np.savetxt(weightedfilename, data[:][:-1], fmt='%f', footer=footer, comments='')
+        footer = "-------------------------\nTotal:          {:f}".format(data[-1, 1])
+        np.savetxt(weightedfilename, data[:][:-1], fmt=['%1.6f'] + ['%16.6e'], footer=footer, comments='')
 
 
 def main(fluxname, channame, expt_config, weight=False):
