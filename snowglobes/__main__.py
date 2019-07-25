@@ -83,7 +83,7 @@ if __name__ == '__main__':
         if not td:
             print('Must provide --td argument and time dependent flux files. Cannot interpolate a single file.')
         raw_flux_path = interp
-        np_interpolate(fluxname, raw_flux_path)
+        interpolate(fluxname, raw_flux_path)
         if exit:
             raise SystemExit
 
