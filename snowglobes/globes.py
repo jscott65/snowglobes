@@ -32,15 +32,18 @@ class GLB():
         lib.glbShowChannelRates(f_out, exp, channel, smearing, effi, bgi)
 
     def PrintChannelRates(self, fluxname, chan, expt_config, *bgfile):
+        # Iterate over interaction channels
         for i, chan_name in enumerate(chan.name):
+            # Set output file
             if bgfile:
                 outfile = get_abs_path(
-                    "out/{}_bg_chan_{}_events_unweighted.dat".format(fluxname, expt_config))
+                    f"out/{fluxname}_bg_chan_{expt_config}_events_unweighted.dat")
             else:
                 outfile = get_abs_path(
-                    "out/{}_{}_{}_events_unweighted.dat".format(fluxname, chan_name, expt_config))
+                    f"out/{fluxname}_{chan_name}_{expt_config}_events_unweighted.dat")
             print(i, outfile)
-            # Add new directory if it doesnt exist
+
+            # Ensure the output dir exists
             os.makedirs(os.path.dirname(outfile), exist_ok=True)
 
             with open(outfile, 'w+') as f_out:
@@ -48,10 +51,10 @@ class GLB():
                     f_out, 0, chan.num[i], lib.GLB_PRE, lib.GLB_WO_EFF, lib.GLB_WO_BG)
             if bgfile:
                 outfile_smeared = get_abs_path(
-                    "out/{}_bg_chan_{}_events_smeared_unweighted.dat".format(fluxname, expt_config))
+                    f"out/{fluxname}_bg_chan_{expt_config}_events_smeared_unweighted.dat")
             else:
                 outfile_smeared = get_abs_path(
-                    "out/{}_{}_{}_events_smeared_unweighted.dat".format(fluxname, chan_name, expt_config))
+                    f"out/{fluxname}_{chan_name}_{expt_config}_events_smeared_unweighted.dat")
             print(i, outfile_smeared)
             with open(outfile_smeared, 'w+') as f_out_smeared:
                 ret = self.ShowChannelRates(

@@ -12,10 +12,12 @@ here = os.path.dirname(os.path.abspath(__file__))
 
 def msw(flux, osc):
 
+    # Set oscillation constants
     th12 = 0.588366
     s2th12 = pow((np.sin(th12)), 2)
     c2th12 = 1-s2th12
 
+    # Compute oscillated fluences for normal hierarchy
     if osc == 1:
         nue = flux[:, 3]
         numu = (flux[:, 1]+flux[:, 3])/2
@@ -25,6 +27,7 @@ def msw(flux, osc):
         numubar = ((1-c2th12)*flux[:, 2]+(1+c2th12)*flux[:, 4])/2
         nutaubar = ((1-c2th12)*flux[:, 2]+(1+c2th12)*flux[:, 4])/2
 
+    # Compute oscillated fluences for inverted hierarchy
     elif osc == -1:
         nue = s2th12*flux[:, 1]+c2th12*flux[:, 3]
         numu = ((1-s2th12)*flux[:, 1]+(1+s2th12)*flux[:, 3])/2
@@ -42,18 +45,18 @@ def msw(flux, osc):
 
 def oscillate(fluxname, osc, td):
     if td:
-        path = here + '/fluxes/' + fluxname
+        path = f'{here}/fluxes/{fluxname}'
         files = [os.path.splitext(filename)[0] for filename in os.listdir(path)]
         files.sort()
 
         for fluxfile in files:
-            fluxfilepath = here + '/fluxes/' + fluxname + '/' + fluxfile + '.dat'
+            fluxfilepath = f'{here}/fluxes/{fluxname}/{fluxfile}.dat'
             flux = np.genfromtxt(fluxfilepath, dtype=None, encoding=None)
             flux = msw(flux, osc)
             if osc == 1:
-                outfilepath = here + '/fluxes/' + fluxname + '_normal/' + fluxfile + '_normal.dat'
+                outfilepath = f'{here}/fluxes/{fluxname}_normal/{fluxfile}_normal.dat'
             elif osc == -1:
-                outfilepath = here + '/fluxes/' + fluxname + '_inverted/' + fluxfile + '_inverted.dat'
+                outfilepath = f'{here}/fluxes/{fluxname}_inverted/{fluxfile}_inverted.dat'
             else:
                 print('Error: Invalid value for osc.')
                 print('Must be either -1 or 1 for inverted and normal hierachies, repsectively.')
@@ -62,13 +65,15 @@ def oscillate(fluxname, osc, td):
             np.savetxt(outfilepath, flux, fmt=' '.join(['%1.4f'] + ['%16.6e']*6), delimiter='\t')
 
     else:
-        fluxfilepath = here + '/fluxes/' + fluxname + '.dat'
+        fluxfilepath = f'{here}/fluxes/{fluxname}.dat'
         # try-except error?? id td flux but no --td flag
         flux = np.genfromtxt(fluxfilepath, dtype=None, encoding=None)
         flux = msw(flux, osc)
+
         if osc == 1:
-            outfilepath = here + '/fluxes/' + fluxname + '_normal.dat'
+            outfilepath = f'{here}/fluxes/{fluxname}_normal.dat'
         elif osc == -1:
-            outfilepath = here + '/fluxes/' + fluxname + '_inverted.dat'
+            outfilepath = f'{here}/fluxes/{fluxname}_inverted.dat'
+
         os.makedirs(os.path.dirname(outfilepath), exist_ok=True)
         np.savetxt(outfilepath, flux, fmt=' '.join(['%1.4f'] + ['%16.6e']*6), delimiter='\t')

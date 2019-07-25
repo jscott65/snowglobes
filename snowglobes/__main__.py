@@ -46,7 +46,7 @@ if __name__ == '__main__':
     plot_flux = args.plot_flux
     plot_rates = args.plot_rates
 
-    path = get_abs_path('/fluxes/' + fluxname)
+    path = get_abs_path(f'/fluxes/{fluxname}')
 
     if plot_flux:
 
@@ -65,14 +65,14 @@ if __name__ == '__main__':
 
     if clean:
         # implement some logic to delete all fluxes that are install with snowglobes.
-        files = os.listdir(here + '/out')
+        files = os.listdir(f'{here}/out')
         for file in files:
             if file.endswith('.dat'):
                 os.remove(file)
             elif os.path.isdir(file):
-                td_files = os.listdir(here + '/out/' + file)
+                td_files = os.listdir(f'{here}/out/{file}')
                 for td_file in td_files:
-                    os.remove(here + '/out/' + file + '/' + td_file)
+                    os.remove(f'{here}/out/{file}/{td_file}')
                 os.rmdir(file)
         print('mister clean')
 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
         if not td:
             print('Must provide --td argument and time dependent flux files. Cannot interpolate a single file.')
         raw_flux_path = interp
-        interpolate(fluxname, raw_flux_path)
+        np_interpolate(fluxname, raw_flux_path)
         if exit:
             raise SystemExit
 
@@ -91,9 +91,11 @@ if __name__ == '__main__':
         print('Oscillating data')
         oscillate(fluxname, osc, td)
         if osc == -1:
-            fluxname = fluxname + '_inverted'
+            print('Inverted hierarchy')
+            fluxname = f'{fluxname}_inverted'
         elif osc == 1:
-            fluxname = fluxname + '_normal'
+            print('Normal hierarchy')
+            fluxname = f'{fluxname}_normal'
         if exit:
             raise SystemExit
 
@@ -102,10 +104,10 @@ if __name__ == '__main__':
         files.sort()
         for flux in files:
             if osc == -1:
-                flux = flux + '_inverted'
+                flux = f'{flux}_inverted'
             elif osc == 1:
-                flux = flux + '_normal'
-            tdfluxname = fluxname + '/' + flux
+                flux = f'{flux}_normal'
+            tdfluxname = f'{fluxname}/{flux}'
             main(tdfluxname, channame, expt_config, weight)
     else:
         main(fluxname, channame, expt_config, weight)

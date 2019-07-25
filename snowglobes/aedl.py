@@ -22,9 +22,9 @@ class AEDL():
 
     def SetFlux(self, fluxname):
         self.flux = get_abs_path("glb/flux.glb")
-        fluxfilename = get_abs_path("fluxes/{}.dat".format(fluxname))
+        fluxfilename = get_abs_path(f"fluxes/{fluxname}.dat")
         if not os.path.exists(fluxfilename):
-            print("Flux file name {} not found".format(fluxfilename))
+            print(f"Flux file name {fluxfilename} not found")
         with open(self.flux) as f_in:
             flux_contents = f_in.read()
             flux_contents1 = re.sub('{flux}', fluxfilename, flux_contents)
@@ -33,40 +33,39 @@ class AEDL():
     def SetSmearing(self, chan, expt_config):
         for chan_name in chan.name:
             output_line = "include \"{}\"\n".format(get_abs_path(
-                'smear/smear_{}_{}.dat').format(chan_name, expt_config))
+                f'smear/smear_{chan_name}_{expt_config}.dat'))
             self.file_obj.write(output_line)
 
     def SetBackground(self, expt_config):
         self.do_bg = False
         self.bg_chan_name = "bg_chan"
         self.bg_filename = get_abs_path(
-            "backgrounds/{}_{}.dat".format(self.bg_chan_name, expt_config))
+            f"backgrounds/{self.bg_chan_name}_{expt_config}.dat")
         if os.path.exists(self.bg_filename):
             self.do_bg = True
-            print("Using background file {}".format(self.bg_filename))
+            print(f"Using background file {self.bg_filename}")
         else:
             print("No background file for this configuration")
         if self.do_bg == True:
             self.file_obj.write("include \"{}\"\n".format(get_abs_path(
-                'smear/smear_{}_{}.dat').format(self.bg_chan_name, expt_config)))
+                f'smear/smear_{self.bg_chan_name}_{expt_config}.dat')))
 
     def SetTargetMass(self, det, expt_config):
         target_mass_raw = det.get_target_mass(expt_config)
         target_mass = '{:13.6f}'.format(target_mass_raw)
-        print("Experiment config: {} Mass: {} kton ".format(
-            expt_config, det.mass[det.get_index(expt_config)]))
+        print(f"Experiment config: {expt_config} Mass: {det.mass[det.get_index(expt_config)]} kton")
         self.file_obj.write("\n/* ####### Detector settings ####### */\n\n")
-        self.file_obj.write("$target_mass= {}\n\n".format(target_mass))
+        self.file_obj.write(f"$target_mass= {target_mass}\n\n")
 
     def SetCrossSections(self, chan):
         self.file_obj.write("\n /******** Cross-sections ********/\n\n")
         for chan_name in chan.name:
-            self.file_obj.write("cross(#{})<\n".format(chan_name))
+            self.file_obj.write(f"cross(#{chan_name})<\n")
             self.file_obj.write("      @cross_file= \"{}\"\n".format(
-                get_abs_path('xscns/xs_{}.dat'.format(chan_name))))
+                get_abs_path(f'xscns/xs_{chan_name}.dat')))
             self.file_obj.write(">\n")
         if self.do_bg == True:
-            self.file_obj.write("cross(#{})<\n".format(self.bg_chan_name))
+            self.file_obj.write(f"cross(#{self.bg_chan_name})<\n")
             self.file_obj.write("     @cross_file= \"{}\"\n".format(
                 get_abs_path('xscns/xs_zero.dat')))
             self.file_obj.write(">\n")
@@ -76,28 +75,25 @@ class AEDL():
         if not os.path.exists(chan.chan_file_name):
             print("Channel file name {} not found".format(chan.chan_file_name))
         for i, chan_name in enumerate(chan.name):
-            self.file_obj.write("channel(#{}_signal)<\n".format(chan_name))
-            self.file_obj.write("      @channel= #supernova_flux:  {}:    {}:     {}:    #{}:    #{}_smear\n".format(
-                chan.cp[i], chan.flav[i], chan.flav[i], chan_name, chan_name))
-            eff_file = get_abs_path("effic/effic_{}_{}.dat".format(chan_name, expt_config))
+            self.file_obj.write(f"channel(#{chan_name}_signal)<\n")
+            self.file_obj.write(f"      @channel= #supernova_flux:  {chan.cp[i]}:    {chan.flav[i]}:     {chan.flav[i]}:    #{chan_name}:    #{chan_name}_smear\n")
+            eff_file = get_abs_path(f"effic/effic_{chan_name}_{expt_config}.dat")
             with open(eff_file) as f_in:
                 eff_file_contents = f_in.read()
-                self.file_obj.write(
-                    "       @post_smearing_efficiencies = {}\n".format(eff_file_contents))
+                self.file_obj.write(f"       @post_smearing_efficiencies = {eff_file_contents}\n")
                 self.file_obj.write(">\n\n")
 
     def MakeBackgroundChannel(self, expt_config):
         if self.do_bg == True:
             cpstate = "-"
             inflav = "e"
-            self.file_obj.write("channel(#{}_signal)<\n".format(self.bg_chan_name))
-            self.file_obj.write("      @channel= #supernova_flux:  {}:    {}:     {}:    #{}:    #{}_smear\n".format(
-                cpstate, inflav, inflav, self.bg_chan_name, self.bg_chan_name))
+            self.file_obj.write(f"channel(#{self.bg_chan_name}_signal)<\n")
+            self.file_obj.write(f"      @channel= #supernova_flux:  {cpstate}:    {inflav}:     {inflav}:    #{self.bg_chan_name}:    #{self.bg_chan_name}_smear\n")
             print(self.bg_filename, "\n")
 
             with open(self.bg_filename) as f_in:
                 bgfilecontents = f_in.read()
-                self.file_obj.write("       @pre_smearing_background = {}\n".format(bgfilecontents))
+                self.file_obj.write(f"       @pre_smearing_background = {bgfilecontents}\n")
                 self.file_obj.write("\n>\n\n")
 
     def Postamble(self):

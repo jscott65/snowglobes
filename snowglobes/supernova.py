@@ -15,8 +15,8 @@ def supernova(fluxname, chan, expt_config):
     channel_file_name = chan.chan_file_name
 
     if os.path.exists(channel_file_name):
-        print("Channels from {}".format(channel_file_name))
-        print("Number of channels found: {}".format(len(chan.name)))
+        print(f"Channels from {channel_file_name}")
+        print(f"Number of channels found: {len(chan.name)}")
 
     else:
         print("Cannot open channel file")
@@ -41,7 +41,7 @@ def supernova(fluxname, chan, expt_config):
 
     glb.PrintChannelRates(fluxname, chan, expt_config)
 
-    bgfile = get_abs_path('backgrounds/bg_chan_{}.dat'.format(expt_config))
+    bgfile = get_abs_path(f'backgrounds/bg_chan_{expt_config}.dat')
 
     if os.path.exists(bgfile):
         bg_file = True

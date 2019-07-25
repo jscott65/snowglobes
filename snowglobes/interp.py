@@ -8,22 +8,32 @@ here = os.path.dirname(os.path.abspath(__file__))
 
 def get_timesteps(fluxname, path, copy):
 
+    # Grab file names sans '.dat'
     files = [os.path.splitext(filename)[0] for filename in os.listdir(path)]
     files.sort()
 
-    time_path = here + '/fluxes/' + fluxname + '_timesteps.dat'
+    # Create timesteps output file
+    time_path = f'{here}/fluxes/{fluxname}_timesteps.dat'
     os.makedirs(os.path.dirname(time_path), exist_ok=True)
+
+    # Open {fluxname}_timesteps.dat
     with open(time_path, 'w+') as f_out:
+        # Iterate over each flux timestep
         for flux in files:
-            filename = flux + '.dat'
-            fluxfilepath = path + '/' + filename
+            filename = f'{flux}.dat'
+            fluxfilepath = f'{path}/{filename}'
+            # Open each flux file for input
             with open(fluxfilepath, 'r') as f_in:
+                # Skip all comments
                 for line in f_in:
                     if line.startswith('#'):
                         pass
+                    # Reads in first uncommented line as timesteps.
                     else:
                         f_out.write(line)
                         break
+
+    # Returns an ndarray of time steps.
     if copy:
         data = np.genfromtxt(time_path).T
         return(data)
@@ -31,10 +41,11 @@ def get_timesteps(fluxname, path, copy):
 
 def interpolate(fluxname, path):
 
+    # Grab file names sans '.dat'
     files = [os.path.splitext(filename)[0] for filename in os.listdir(path)]
     files.sort()
 
-    #Read in timesteps
+    # Read in timesteps
     overall_time, pb_time = get_timesteps(fluxname, path, copy=True)
 
     # 10 kpc in cm
@@ -42,10 +53,12 @@ def interpolate(fluxname, path):
     # distance modulus
     factor = 1/(4*np.pi*pow(R, 2))
 
+    # Iterate over each flux timestep
     for i, flux in enumerate(files):
-        filename = flux + '.dat'
+
+        filename = f'{flux}.dat'
         fluxfilepath = path + filename
-        outfilepath = here + '/fluxes/' + fluxname + '/' + filename
+        outfilepath = f'{here}/fluxes/{fluxname}/{filename}'
 
         print(f'Interpolating {filename}')
         print(f'\tinput: {fluxfilepath}')
@@ -58,8 +71,7 @@ def interpolate(fluxname, path):
         # Convert energy to GeV
         energy *= 0.001
 
-        bins, nue_fluence, nuebar_fluence, nux_fluence, nuxbar_fluence = np.zeros([
-                                                                                  501, 5], dtype=float).T
+        bins, nue_fluence, nuebar_fluence, nux_fluence, nuxbar_fluence = np.zeros([501, 5], dtype=float).T
 
         # Propogate the energy bins
         bins = np.arange(0, .1002, 0.0002)
@@ -88,8 +100,8 @@ def interpolate(fluxname, path):
                     f += 1
                 elif bins[f] > energy[p+1]:
                     p += 1
-                # print(f)
-        # Convert the fluxes into fluences by multiplying by dt
+
+        # Convert fluxes into fluences by multiplying by distance modulus and dt
         if i == 0 or i == 1:
             nue_fluence = nue_fluence * factor * (pb_time[1] - pb_time[0])
             nuebar_fluence = nuebar_fluence * factor * (pb_time[1] - pb_time[0])
@@ -102,9 +114,9 @@ def interpolate(fluxname, path):
             nuxbar_fluence = nuxbar_fluence * factor * (pb_time[i] - pb_time[i-1])
 
         # Prepare data for output
-
         output = np.array([bins, nue_fluence, nux_fluence, nux_fluence,
                            nuebar_fluence, nuxbar_fluence, nuxbar_fluence]).T
 
+        # Save interpolated fluences to SNOwGLoBES fluxes directory
         os.makedirs(os.path.dirname(outfilepath), exist_ok=True)
         np.savetxt(outfilepath, output, fmt=' '.join(['%1.4f'] + ['%16.6e']*6), delimiter='\t')

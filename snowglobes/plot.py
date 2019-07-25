@@ -13,8 +13,7 @@ def get_totals(fluxname, channels, expt_config):
 
     totals = np.zeros(len(channels))
     for i, channel in enumerate(channels):
-        filepath = here + '/out/' + fluxname + '_' + channel + '_' + expt_config + '_events_smeared.dat'
-
+        filepath = f'{here}/out/{fluxname}_{channel}_{expt_config}_events_smeared.dat'
         data = np.genfromtxt(filepath, skip_header=201)
         totals[i] = data[1]
     return(totals)
@@ -25,7 +24,7 @@ def plotflux(fluxname, td=False, output_name=False, interactive=False):
     print(f'Plotting {fluxname}.')
 
     if td:
-        path = here + '/fluxes/' + fluxname
+        path = f'{here}/fluxes/{fluxname}'
         print(path)
         files = os.listdir(path)
         files.sort()
@@ -34,7 +33,7 @@ def plotflux(fluxname, td=False, output_name=False, interactive=False):
         df.columns = ['energy', 'nue', 'numu', 'nutau', 'nuebar', 'numubar', 'nutaubar']
 
         for i, file in enumerate(files):
-            filepath = path + '/' + file
+            filepath = f'{path}/{file}'
             # print(filepath)
             d = np.genfromtxt(filepath)
 
@@ -51,7 +50,7 @@ def plotflux(fluxname, td=False, output_name=False, interactive=False):
 
     else:
 
-        path = here + '/fluxes/' + fluxname + '.dat'
+        path = f'{here}/fluxes/{fluxname}.dat'
 
         d = np.genfromtxt(path)
 
@@ -116,7 +115,7 @@ def plotflux(fluxname, td=False, output_name=False, interactive=False):
         else:
             f_out = output_name
     else:
-        f_out = fluxname + "_flux_plot.png"
+        f_out = f"{fluxname}_flux_plot.png"
 
     plt.savefig(f_out)
 
@@ -127,7 +126,7 @@ def plotflux(fluxname, td=False, output_name=False, interactive=False):
 
 def plot_rate_vs_time(fluxname, channels, expt_config, cumulative=False, log=False, interactive=False):
 
-    path = here + '/fluxes/' + fluxname
+    path = f'{here}/fluxes/{fluxname}'
 
     print(f'Plotting {path}')
 
@@ -139,7 +138,7 @@ def plot_rate_vs_time(fluxname, channels, expt_config, cumulative=False, log=Fal
     for i, file in enumerate(files):
         #fluxname = fluxname + '/' + file
 
-        d = get_totals(fluxname + '/' + file, channels, expt_config)
+        d = get_totals(f'{fluxname}/{file}', channels, expt_config)
         data[i] = d
 
     df = pd.DataFrame(data)
@@ -149,7 +148,7 @@ def plot_rate_vs_time(fluxname, channels, expt_config, cumulative=False, log=Fal
 
     df.columns = channels
 
-    timepath = path + '_timesteps.dat'
+    timepath = f'{path}_timesteps.dat'
 
     overall_time, pb_time = np.genfromtxt(timepath).T
 
@@ -179,7 +178,7 @@ def plot_rate_vs_time(fluxname, channels, expt_config, cumulative=False, log=Fal
     if interactive:
         plt.show()
 
-    f_out = fluxname + "_events_vs_time_plot.png"
+    f_out = f"{fluxname}_events_vs_time_plot.png"
     plt.savefig(f_out)
 
     print(f'Saved as {f_out}')
